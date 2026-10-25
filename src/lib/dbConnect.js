@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://maihuylong102_db_user:3fWcjUoAEb21uJs4@cluster0.cstps1v.mongodb.net/mlbb_shop?retryWrites=true&w=majority";
 
-if (!MONGODB_URI) {
-  // Cảnh báo nếu chưa thiết lập biến môi trường MONGODB_URI trong .env.local
-  // (Không throw lỗi ngay lúc build để tránh crash khi preview UI)
-  console.warn("⚠️ Cảnh báo: Biến môi trường MONGODB_URI chưa được định nghĩa trong .env.local");
+if (!process.env.MONGODB_URI) {
+  process.env.MONGODB_URI = MONGODB_URI;
 }
 
 /**

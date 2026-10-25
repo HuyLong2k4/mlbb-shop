@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
 import { mockAccounts } from "@/data/mockAccounts";
@@ -17,25 +18,41 @@ export async function GET(request, { params }) {
       );
     }
 
-    const normalizedId = decodeURIComponent(id).trim();
+    let normalizedId = String(id).trim();
+    try {
+      normalizedId = decodeURIComponent(normalizedId).trim();
+    } catch {
+      // Giữ nguyên nếu không giải mã được
+    }
 
     // 1. Kết nối cơ sở dữ liệu MongoDB
     try {
       await dbConnect();
     } catch (dbErr) {
-      console.warn("Lỗi kết nối MongoDB, chuyển sang kiểm tra mock data:", dbErr.message);
+      console.warn("Cảnh báo dbConnect:", dbErr.message);
     }
 
-    // 2. Tìm tài khoản trong MongoDB (hỗ trợ tìm chính xác hoặc không phân biệt hoa thường)
+    // 2. Tìm tài khoản trong MongoDB (hỗ trợ tìm chính xác, chữ hoa, chữ thường, ObjectId)
     let account = null;
     try {
-      account = await Account.findOne({
-        $or: [
-          { id: normalizedId.toUpperCase() },
-          { id: normalizedId },
-          { id: new RegExp(`^${normalizedId}$`, "i") },
-        ],
-      }).lean();
+      const orConditions = [
+        { id: normalizedId },
+        { id: normalizedId.toUpperCase() },
+        { id: normalizedId.toLowerCase() },
+      ];
+
+      // Regex an toàn chống ký tự đặc biệt
+      try {
+        const escaped = normalizedId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        orConditions.push({ id: new RegExp(`^${escaped}$`, "i") });
+      } catch {}
+
+      // Tìm theo _id nếu là MongoDB ObjectId hợp lệ
+      if (mongoose.Types.ObjectId.isValid(normalizedId)) {
+        orConditions.push({ _id: new mongoose.Types.ObjectId(normalizedId) });
+      }
+
+      account = await Account.findOne({ $or: orConditions }).lean();
     } catch (queryErr) {
       console.warn("Lỗi truy vấn MongoDB Account.findOne:", queryErr.message);
     }

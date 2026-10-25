@@ -90,12 +90,17 @@ export default function AccountDetailPage() {
     const fetchAccountDetail = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/accounts/${encodeURIComponent(accountId)}`, {
+        let cleanId = accountId;
+        try {
+          cleanId = decodeURIComponent(accountId);
+        } catch {}
+
+        const res = await fetch(`/api/accounts/${encodeURIComponent(cleanId)}`, {
           cache: "no-store",
         });
         const data = await res.json();
 
-        if (data.success && data.data && isMounted) {
+        if (res.ok && data.success && data.data && isMounted) {
           setAccount(data.data);
           setLoading(false);
           return;
@@ -105,8 +110,16 @@ export default function AccountDetailPage() {
       }
 
       // Fallback tìm trong mock data nếu chưa có API hoặc kết nối DB chậm
+      const cleanCompareId = (() => {
+        try {
+          return decodeURIComponent(accountId).toLowerCase();
+        } catch {
+          return accountId.toLowerCase();
+        }
+      })();
+
       const mockAcc = mockAccounts.find(
-        (acc) => acc.id.toLowerCase() === accountId?.toLowerCase()
+        (acc) => acc.id.toLowerCase() === cleanCompareId
       );
       if (mockAcc && isMounted) {
         setAccount(mockAcc);
