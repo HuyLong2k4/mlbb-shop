@@ -65,7 +65,7 @@ export default function AccSinhVienPage() {
             Kho Tài Khoản <span className="text-emerald-400">Sinh Viên Giá Rẻ</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
-            Tuyển chọn tài khoản giá sinh viên dưới 1.000.000 ₫ trắng thông tin 100%, sẵn sàng quẩy rank ngay.
+            Tuyển chọn tài khoản ngon giá sinh viên cho anh em sẵn sàng quẩy rank ngay.
           </p>
         </div>
       </div>

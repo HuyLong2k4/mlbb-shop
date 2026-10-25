@@ -68,7 +68,7 @@ export default function Footer() {
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-6">
               Hệ thống cung cấp tài khoản Mobile Legends: Bang Bang tự động hàng đầu
               Việt Nam. Đa dạng phân khúc từ Acc Sinh Viên giá rẻ, nick cày thuê,
-              đến các tài khoản VIP sở hữu trọn bộ Skin Collector, Legend và KOF.
+              đến các tài khoản VIP sở hữu trọn bộ Skin Legend, Hợp tác và Collector.
             </p>
 
             {/* Kênh kết nối mạng xã hội - Text links tối giản */}
@@ -112,7 +112,7 @@ export default function Footer() {
                   href="/acc-vip"
                   className="text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  Acc VIP (Trên 1 triệu)
+                  Acc VIP
                 </Link>
               </li>
               <li>
@@ -120,7 +120,7 @@ export default function Footer() {
                   href="/acc-sinh-vien"
                   className="text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  Acc Sinh Viên (Dưới 1 triệu)
+                  Acc Sinh Viên
                 </Link>
               </li>
               <li>

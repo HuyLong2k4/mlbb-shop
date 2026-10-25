@@ -65,7 +65,7 @@ export default function AccVipPage() {
             Kho Tài Khoản <span className="text-gold-gradient">Acc VIP MLBB</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
-            Tổng hợp các tài khoản VIP giá từ 1.000.000 ₫ trở lên sở hữu các dòng Skin hiếm Collector, Legend, KOF, Prime.
+            Tổng hợp các tài khoản VIP trở lên sở hữu các dòng Skin hiếm Legend, Hợp tác, Collector, Prime.
           </p>
         </div>
       </div>

@@ -19,12 +19,10 @@ const navItems: NavItem[] = [
   {
     name: "Acc VIP",
     href: "/acc-vip",
-    badge: "≥ 1Tr",
   },
   {
     name: "Acc Sinh viên",
     href: "/acc-sinh-vien",
-    badge: "< 1Tr",
   },
   {
     name: "Liên hệ",
