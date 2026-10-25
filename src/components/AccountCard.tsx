@@ -18,7 +18,7 @@ export interface AccountProps {
 }
 
 export default function AccountCard({ account }: { account: AccountProps }) {
-  const isVip = account.category === "VIP";
+  const isVip = account.salePrice >= 1000000;
 
   return (
     <Link

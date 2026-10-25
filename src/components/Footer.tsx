@@ -112,15 +112,7 @@ export default function Footer() {
                   href="/acc-vip"
                   className="text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  Acc VIP - Thần Thoại
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/acc-vip?type=collector"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Nick Full Skin Collector
+                  Acc VIP (Trên 1 triệu)
                 </Link>
               </li>
               <li>
@@ -128,15 +120,7 @@ export default function Footer() {
                   href="/acc-sinh-vien"
                   className="text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  Acc Sinh Viên 50k - 100k
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/acc-trang-thong-tin"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Acc Trắng Thông Tin (TTT)
+                  Acc Sinh Viên (Dưới 1 triệu)
                 </Link>
               </li>
               <li>

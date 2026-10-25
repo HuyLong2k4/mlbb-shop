@@ -18,14 +18,11 @@ export default function AccVipPage() {
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {
-          // Lọc các nick VIP (Rank Thần Thoại / Vinh Quang / Chí Tôn hoặc giá từ 300k trở lên)
+          // Lọc các nick VIP: Giá từ 1.000.000 ₫ trở lên
           const vipList: AccountProps[] = data.data
             .filter((acc: any) => {
-              const isVipRank = ["Thần Thoại", "Vinh Quang Thần Thoại", "Chí Tôn"].includes(
-                acc.rank
-              );
-              const isVipPrice = (acc.price || 0) >= 300000;
-              return isVipRank || isVipPrice;
+              const price = acc.price || 0;
+              return price >= 1000000;
             })
             .map((acc: any) => ({
               id: acc.id,
@@ -68,7 +65,7 @@ export default function AccVipPage() {
             Kho Tài Khoản <span className="text-gold-gradient">Acc VIP MLBB</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
-            Tổng hợp các tài khoản Rank Thần Thoại, Vinh Quang Thần Thoại, Chí Tôn sở hữu các dòng Skin hiếm Collector, Legend, KOF, Prime.
+            Tổng hợp các tài khoản VIP giá từ 1.000.000 ₫ trở lên sở hữu các dòng Skin hiếm Collector, Legend, KOF, Prime.
           </p>
         </div>
       </div>

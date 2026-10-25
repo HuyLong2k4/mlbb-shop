@@ -81,20 +81,22 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
         if (computedTier !== selectedTier) return false;
       }
 
-      // 2. Lọc theo khoảng giá
+      // 2. Lọc theo khoảng giá (VIP: >= 1tr, Sinh Viên: < 1tr)
       if (selectedPriceRange !== "ALL") {
+        if (selectedPriceRange === "STUDENT_UNDER_1M" && account.price >= 1000000) return false;
+        if (selectedPriceRange === "VIP_ABOVE_1M" && account.price < 1000000) return false;
         if (selectedPriceRange === "UNDER_500K" && account.price >= 500000) return false;
         if (
-          selectedPriceRange === "500K_1500K" &&
-          (account.price < 500000 || account.price > 1500000)
+          selectedPriceRange === "500K_1M" &&
+          (account.price < 500000 || account.price >= 1000000)
         )
           return false;
         if (
-          selectedPriceRange === "1500K_3000K" &&
-          (account.price < 1500000 || account.price > 3000000)
+          selectedPriceRange === "1M_3M" &&
+          (account.price < 1000000 || account.price > 3000000)
         )
           return false;
-        if (selectedPriceRange === "ABOVE_3000K" && account.price <= 3000000) return false;
+        if (selectedPriceRange === "ABOVE_3M" && account.price <= 3000000) return false;
       }
 
       // 3. Lọc theo từ khóa tìm kiếm (Mã ID, Tiêu đề hoặc Tên Skin)
@@ -208,10 +210,12 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
               className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 transition-colors cursor-pointer"
             >
               <option value="ALL">Tất cả mức giá</option>
-              <option value="UNDER_500K">Dưới 500.000 ₫ (Sinh viên)</option>
-              <option value="500K_1500K">500.000 ₫ - 1.500.000 ₫</option>
-              <option value="1500K_3000K">1.500.000 ₫ - 3.000.000 ₫</option>
-              <option value="ABOVE_3000K">Trên 3.000.000 ₫ (Acc VIP)</option>
+              <option value="VIP_ABOVE_1M">Từ 1.000.000 ₫ trở lên (Acc VIP)</option>
+              <option value="STUDENT_UNDER_1M">Dưới 1.000.000 ₫ (Acc Sinh Viên)</option>
+              <option value="UNDER_500K">Dưới 500.000 ₫ (Giá rẻ)</option>
+              <option value="500K_1M">500.000 ₫ - 1.000.000 ₫</option>
+              <option value="1M_3M">1.000.000 ₫ - 3.000.000 ₫ (VIP)</option>
+              <option value="ABOVE_3M">Trên 3.000.000 ₫ (Siêu VIP)</option>
             </select>
           </div>
 
@@ -305,14 +309,23 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
                     </span>
                   </div>
 
-                  {/* Trạng thái */}
-                  <div className="absolute top-2.5 right-2.5 z-20">
+                  {/* Trạng thái & Phân loại VIP / Sinh Viên */}
+                  <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
+                        account.price >= 1000000
+                          ? "bg-amber-500/20 text-gold-300 border-gold-500/40"
+                          : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                      }`}
+                    >
+                      {account.price >= 1000000 ? "VIP" : "Sinh Viên"}
+                    </span>
                     {isAvailable ? (
-                      <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 backdrop-blur-sm">
+                      <span className="px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 backdrop-blur-sm">
                         Còn hàng
                       </span>
                     ) : (
-                      <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-navy-900 text-slate-400 border border-navy-750">
+                      <span className="px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-navy-900 text-slate-400 border border-navy-750">
                         Đã bán
                       </span>
                     )}

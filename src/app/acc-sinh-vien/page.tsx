@@ -18,12 +18,11 @@ export default function AccSinhVienPage() {
         const data = await res.json();
 
         if (data.success && Array.isArray(data.data)) {
-          // Lọc các nick giá sinh viên (giá dưới 300.000đ hoặc Rank Sử Thi, Huyền Thoại)
+          // Lọc các nick giá sinh viên: Giá dưới 1.000.000 ₫
           const studentList: AccountProps[] = data.data
             .filter((acc: any) => {
-              const isCheapPrice = (acc.price || 0) < 300000;
-              const isMidRank = ["Sử Thi", "Huyền Thoại"].includes(acc.rank);
-              return isCheapPrice || isMidRank;
+              const price = acc.price || 0;
+              return price < 1000000;
             })
             .map((acc: any) => ({
               id: acc.id,
@@ -66,7 +65,7 @@ export default function AccSinhVienPage() {
             Kho Tài Khoản <span className="text-emerald-400">Sinh Viên Giá Rẻ</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
-            Tuyển chọn tài khoản Rank Sử Thi, Huyền Thoại trắng thông tin, giá chỉ từ vài chục đến dưới 300k, sẵn sàng quẩy rank ngay.
+            Tuyển chọn tài khoản giá sinh viên dưới 1.000.000 ₫ trắng thông tin 100%, sẵn sàng quẩy rank ngay.
           </p>
         </div>
       </div>
