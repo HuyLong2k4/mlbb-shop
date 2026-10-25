@@ -666,9 +666,6 @@ export default function AccountDetailPage() {
                 Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline:{" "}
                 <strong className="text-gold-400 font-mono">{ADMIN_PHONE}</strong>) để giao dịch trực tiếp & nhận acc ngay.
               </p>
-              <p className="text-[11px] text-slate-400 italic">
-                (Hệ thống tự động sao chép mã đơn ID: #{account.id} vào bộ nhớ tạm)
-              </p>
             </div>
           </div>
         </div>

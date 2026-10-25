@@ -82,7 +82,7 @@ export default function Navbar() {
                 Flash Sale:
               </span>
               <span className="text-slate-300">
-                Acc Rank Thần Thoại & Vinh Quang giảm 25% duy nhất hôm nay
+                Toàn bộ sản phẩm giảm tối thiểu 25% duy nhất hôm nay
               </span>
             </div>
             <div className="flex items-center gap-4 text-xs font-medium">

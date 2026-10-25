@@ -240,9 +240,6 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
               </span>
             )}
           </div>
-          <span className="text-[11px] text-emerald-400 font-mono">
-            ● Dữ liệu cache ISR 60s
-          </span>
         </div>
       </div>
 
