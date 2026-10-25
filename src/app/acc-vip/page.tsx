@@ -1,62 +1,60 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Filter, SlidersHorizontal } from "lucide-react";
+import { Flame, RefreshCw, AlertCircle } from "lucide-react";
 import AccountCard, { AccountProps } from "@/components/AccountCard";
 
-const vipAccounts: AccountProps[] = [
-  {
-    id: "mlbb-vip-01",
-    title: "Acc MLBB Rank Thần Thoại Vinh Quang - Full Skin Collector",
-    code: "VIP-9981",
-    category: "VIP",
-    rank: "Vinh Quang 120★",
-    skinCount: 388,
-    heroCount: 125,
-    highlightSkin: "Gusion Thấu Kính + Chou Iori",
-    originalPrice: 4500000,
-    salePrice: 3200000,
-    isHot: true,
-  },
-  {
-    id: "mlbb-vip-02",
-    title: "Nick Full Tướng - All Skin Prime + Legend Granger & Lesley",
-    code: "VIP-7723",
-    category: "VIP",
-    rank: "Thần Thoại Bất Tử 80★",
-    skinCount: 420,
-    heroCount: 125,
-    highlightSkin: "Granger Ma Nữ + Lesley Thiên Hà",
-    originalPrice: 5800000,
-    salePrice: 4600000,
-    isHot: true,
-  },
-  {
-    id: "mlbb-vip-03",
-    title: "Acc Fanny Skylark + Hayabusa Shadow of Obscurity - Winrate 75%",
-    code: "VIP-5541",
-    category: "VIP",
-    rank: "Thần Thoại 45★",
-    skinCount: 265,
-    heroCount: 118,
-    highlightSkin: "Fanny Skylark + Hayabusa Shura",
-    originalPrice: 2800000,
-    salePrice: 1950000,
-  },
-  {
-    id: "mlbb-vip-04",
-    title: "Acc KOF Series Trọn Bộ - Lancelot Floral + Alucard Legend",
-    code: "VIP-4319",
-    category: "VIP",
-    rank: "Thần Thoại 50★",
-    skinCount: 310,
-    heroCount: 122,
-    highlightSkin: "Full 6 Skin KOF + Legend",
-    originalPrice: 3900000,
-    salePrice: 2850000,
-  },
-];
-
 export default function AccVipPage() {
+  const [accounts, setAccounts] = useState<AccountProps[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVipAccounts = async () => {
+      try {
+        const res = await fetch("/api/accounts?status=Còn hàng&limit=50", {
+          cache: "no-store",
+        });
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          // Lọc các nick VIP (Rank Thần Thoại / Vinh Quang / Chí Tôn hoặc giá từ 300k trở lên)
+          const vipList: AccountProps[] = data.data
+            .filter((acc: any) => {
+              const isVipRank = ["Thần Thoại", "Vinh Quang Thần Thoại", "Chí Tôn"].includes(
+                acc.rank
+              );
+              const isVipPrice = (acc.price || 0) >= 300000;
+              return isVipRank || isVipPrice;
+            })
+            .map((acc: any) => ({
+              id: acc.id,
+              title: acc.title,
+              code: acc.id,
+              category: "VIP" as const,
+              rank: acc.rank,
+              skinCount: acc.skinCount || 0,
+              heroCount: acc.heroCount || 0,
+              highlightSkin:
+                acc.highlightSkins?.[0] || acc.highlightSkins?.join(", ") || acc.rank,
+              originalPrice: acc.originalPrice || acc.price || 0,
+              salePrice: acc.price || 0,
+              imageUrl: acc.images?.[0] || acc.screenshots?.[0]?.imageUrl || "",
+              isHot: true,
+            }));
+
+          setAccounts(vipList);
+        }
+      } catch (err) {
+        console.error("Lỗi tải danh sách Acc VIP:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVipAccounts();
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       {/* Page Header */}
@@ -70,44 +68,58 @@ export default function AccVipPage() {
             Kho Tài Khoản <span className="text-gold-gradient">Acc VIP MLBB</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-300">
-            Tổng hợp các tài khoản Rank Thần Thoại Vinh Quang, Thần Thoại Bất Tử,
-            sở hữu các dòng Skin hiếm Collector, Legend, KOF, Aspirants, Prime.
+            Tổng hợp các tài khoản Rank Thần Thoại, Vinh Quang Thần Thoại, Chí Tôn sở hữu các dòng Skin hiếm Collector, Legend, KOF, Prime.
           </p>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
-      <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold uppercase text-slate-400 flex items-center gap-1.5">
-            <SlidersHorizontal className="w-4 h-4 text-gold-400" />
-            Lọc theo:
-          </span>
-          <select className="bg-navy-950 border border-navy-700 text-xs font-semibold text-slate-200 rounded px-3 py-2 outline-none focus:border-gold-500">
-            <option>Tất cả mức giá</option>
-            <option>1.000.000đ - 3.000.000đ</option>
-            <option>3.000.000đ - 5.000.000đ</option>
-            <option>Trên 5.000.000đ</option>
-          </select>
-          <select className="bg-navy-950 border border-navy-700 text-xs font-semibold text-slate-200 rounded px-3 py-2 outline-none focus:border-gold-500">
-            <option>Tất cả Rank</option>
-            <option>Thần Thoại Bất Tử (100★+)</option>
-            <option>Thần Thoại Vinh Quang (50★+)</option>
-            <option>Thần Thoại</option>
-          </select>
+      {/* Toolbar đối soát số lượng */}
+      <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 flex items-center justify-between">
+        <div className="text-xs text-slate-300">
+          Hiện có <strong className="text-gold-400 font-mono font-bold text-sm">{accounts.length}</strong> tài khoản VIP sẵn sàng giao dịch
         </div>
-
-        <div className="text-xs text-slate-400">
-          Hiển thị <span className="text-gold-400 font-bold">4</span> tài khoản VIP
-        </div>
+        <Link
+          href="/"
+          className="text-xs text-slate-400 hover:text-gold-400 transition-colors font-medium"
+        >
+          Xem tất cả tại Trang chủ →
+        </Link>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {vipAccounts.map((acc) => (
-          <AccountCard key={acc.id} account={acc} />
-        ))}
-      </div>
+      {/* Trạng thái Loading */}
+      {loading && (
+        <div className="py-20 flex flex-col items-center justify-center space-y-3">
+          <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Đang tải kho Acc VIP...
+          </p>
+        </div>
+      )}
+
+      {/* Danh sách thẻ Card */}
+      {!loading && accounts.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {accounts.map((acc) => (
+            <AccountCard key={acc.id} account={acc} />
+          ))}
+        </div>
+      )}
+
+      {/* Trạng thái Empty */}
+      {!loading && accounts.length === 0 && (
+        <div className="py-16 text-center space-y-3 bg-navy-900/40 rounded-2xl border border-navy-800">
+          <AlertCircle className="w-8 h-8 mx-auto text-slate-500" />
+          <p className="text-sm font-bold text-slate-300 uppercase">
+            Hiện tại chưa có tài khoản VIP nào trong kho
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-gold-400 text-navy-950"
+          >
+            Quay lại trang chủ
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

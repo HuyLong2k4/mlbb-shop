@@ -28,13 +28,22 @@ export default function AccountCard({ account }: { account: AccountProps }) {
       <div className="relative aspect-video w-full overflow-hidden bg-navy-950">
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-navy-950/70 z-10" />
 
-        <div className="w-full h-full flex items-center justify-center bg-navy-950 p-6 group-hover:scale-105 transition-transform duration-500">
-          <div className="text-center z-10">
-            <span className="text-sm font-bold text-slate-200 uppercase tracking-widest block">
-              {account.highlightSkin}
-            </span>
+        {account.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={account.imageUrl}
+            alt={account.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-navy-950 p-6 group-hover:scale-105 transition-transform duration-500">
+            <div className="text-center z-10">
+              <span className="text-sm font-bold text-slate-200 uppercase tracking-widest block">
+                {account.highlightSkin}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Acc Code Badge */}
         <div className="absolute top-2.5 left-2.5 z-20">
