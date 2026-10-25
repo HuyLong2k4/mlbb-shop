@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { siteConfig } from "@/config/site";
 
 interface NavItem {
   name: string;
@@ -89,7 +90,7 @@ export default function Navbar() {
               <span className="text-emerald-400">Hệ thống tự động 24/7</span>
               <span className="text-slate-700">•</span>
               <span className="text-slate-400 hover:text-slate-200 transition-colors">
-                Hotline: 1900.8888
+                Hotline: {siteConfig.contact.hotline}
               </span>
             </div>
           </div>
@@ -258,7 +259,7 @@ export default function Navbar() {
             Quản Trị Admin
           </Link>
           <p className="text-[11px] text-center text-slate-400 pt-2 font-medium">
-            Hotline: 1900.8888 (24/7)
+            Hotline: {siteConfig.contact.hotline} (24/7)
           </p>
         </div>
       </div>

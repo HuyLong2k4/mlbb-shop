@@ -29,6 +29,7 @@ import {
   MLBBMockAccount,
   MLBBAccountRank,
 } from "@/data/mockAccounts";
+import { siteConfig } from "@/config/site";
 
 // Format tiền tệ VNĐ
 const formatVND = (amount: number) => {
@@ -71,9 +72,6 @@ const getRankBadgeInfo = (rank: MLBBAccountRank | string) => {
       };
   }
 };
-
-// Số Zalo người bán
-const ADMIN_PHONE = process.env.NEXT_PUBLIC_ADMIN_PHONE || "0988123456";
 
 export default function AccountDetailPage() {
   const params = useParams();
@@ -246,8 +244,7 @@ export default function AccountDetailPage() {
   const handleBuyNow = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(adminMessage);
-      const zaloUrl = `https://zalo.me/${ADMIN_PHONE}`;
-      window.open(zaloUrl, "_blank", "noopener,noreferrer");
+      window.open(siteConfig.contact.zaloUrl, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -664,7 +661,7 @@ export default function AccountDetailPage() {
             <div className="text-center space-y-1.5 pt-1">
               <p className="text-xs text-slate-300">
                 Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline:{" "}
-                <strong className="text-gold-400 font-mono">{ADMIN_PHONE}</strong>) để giao dịch trực tiếp & nhận acc ngay.
+                <strong className="text-gold-400 font-mono">{siteConfig.contact.hotline}</strong>) để giao dịch trực tiếp & nhận acc ngay.
               </p>
             </div>
           </div>

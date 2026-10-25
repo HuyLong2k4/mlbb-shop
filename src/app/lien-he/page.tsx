@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Send,
 } from "lucide-react";
+import { siteConfig } from "@/config/site";
 
 export default function ContactPage() {
   return (
@@ -28,58 +29,71 @@ export default function ContactPage() {
         {/* Contact Info Cards */}
         <div className="space-y-4">
           {/* Card 1: Hotline */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-gold-500/50 transition-colors flex items-start gap-4">
-            <div className="p-3 rounded-lg bg-gold-500/10 text-gold-400">
+          <a
+            href={`tel:${siteConfig.contact.phone}`}
+            className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-gold-500/50 transition-colors flex items-start gap-4 group"
+          >
+            <div className="p-3 rounded-lg bg-gold-500/10 text-gold-400 group-hover:scale-110 transition-transform">
               <Phone className="w-6 h-6" />
             </div>
             <div>
               <div className="text-xs uppercase font-bold text-slate-400">
                 Hotline Khẩn Cấp
               </div>
-              <div className="text-lg font-black text-slate-100 mt-0.5">
-                1900.8888 / 0988.123.456
+              <div className="text-lg font-black text-slate-100 group-hover:text-gold-400 transition-colors mt-0.5 font-mono">
+                {siteConfig.contact.hotline}
               </div>
               <div className="text-xs text-slate-400 mt-1">
-                Nhận cuộc gọi từ 08:00 - 24:00 hàng ngày
+                Nhận cuộc gọi: {siteConfig.contact.workingHours}
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Card 2: Zalo */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-gold-500/50 transition-colors flex items-start gap-4">
-            <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400">
+          <a
+            href={siteConfig.contact.zaloUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-blue-500/50 transition-colors flex items-start gap-4 group"
+          >
+            <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
               <MessageCircle className="w-6 h-6" />
             </div>
             <div>
               <div className="text-xs uppercase font-bold text-slate-400">
                 Zalo Hỗ Trợ Trực Tuyến
               </div>
-              <div className="text-lg font-black text-slate-100 mt-0.5">
-                0988.123.456 (CSKH MLBB)
+              <div className="text-lg font-black text-slate-100 group-hover:text-blue-400 transition-colors mt-0.5 font-mono">
+                {siteConfig.contact.zaloDisplay} ({siteConfig.contact.zaloName})
               </div>
               <div className="text-xs text-slate-400 mt-1">
-                Phản hồi nhanh trong 1 - 3 phút
+                {siteConfig.contact.supportResponseTime}
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Card 3: Fanpage */}
-          <div className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-gold-500/50 transition-colors flex items-start gap-4">
-            <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400">
+          <a
+            href={siteConfig.socials.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-5 rounded-xl bg-navy-900 border border-navy-800 hover:border-indigo-500/50 transition-colors flex items-start gap-4 group"
+          >
+            <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform">
               <Facebook className="w-6 h-6" />
             </div>
             <div>
               <div className="text-xs uppercase font-bold text-slate-400">
                 Fanpage Facebook
               </div>
-              <div className="text-lg font-black text-slate-100 mt-0.5">
-                fb.com/mlbbstore.official
+              <div className="text-lg font-black text-slate-100 group-hover:text-indigo-400 transition-colors mt-0.5">
+                {siteConfig.socials.facebookDisplay}
               </div>
               <div className="text-xs text-slate-400 mt-1">
                 Cập nhật sự kiện & giveaway acc VIP
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Card 4: Bảo hành */}
           <div className="p-5 rounded-xl bg-navy-900 border border-navy-800 flex items-start gap-4">
@@ -91,7 +105,7 @@ export default function ContactPage() {
                 Cam Kết Bảo Hành
               </div>
               <div className="text-xs text-slate-300 mt-1 leading-relaxed">
-                100% tài khoản bán ra được kiểm định trắng thông tin hoặc đã đổi sang email chính chủ khách hàng.
+                {siteConfig.commitments.security}. {siteConfig.commitments.warranty}.
               </div>
             </div>
           </div>

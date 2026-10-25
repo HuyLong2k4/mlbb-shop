@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { siteConfig } from "@/config/site";
 
 export default function Footer() {
   return (
@@ -66,9 +67,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-6">
-              Hệ thống cung cấp tài khoản Mobile Legends: Bang Bang tự động hàng đầu
-              Việt Nam. Đa dạng phân khúc từ Acc Sinh Viên giá rẻ, nick cày thuê,
-              đến các tài khoản VIP sở hữu trọn bộ Skin Legend, Hợp tác và Collector.
+              {siteConfig.description}
             </p>
 
             {/* Kênh kết nối mạng xã hội - Text links tối giản */}
@@ -78,21 +77,27 @@ export default function Footer() {
               </span>
               <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
                 <a
-                  href="#"
+                  href={siteConfig.socials.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-gold-400 transition-colors"
                 >
                   Facebook
                 </a>
                 <span className="text-slate-700">•</span>
                 <a
-                  href="#"
+                  href={siteConfig.socials.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-gold-400 transition-colors"
                 >
                   Telegram
                 </a>
                 <span className="text-slate-700">•</span>
                 <a
-                  href="#"
+                  href={siteConfig.contact.zaloUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-gold-400 transition-colors"
                 >
                   Zalo CSKH
@@ -185,32 +190,45 @@ export default function Footer() {
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                   Hotline 24/7
                 </span>
-                <span className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono">
-                  0988.123.456
-                </span>
+                <a
+                  href={`tel:${siteConfig.contact.phone}`}
+                  className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono"
+                >
+                  {siteConfig.contact.hotline}
+                </a>
               </div>
 
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                   Zalo Hỗ Trợ
                 </span>
-                <span className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono">
-                  0988.123.456 (Admin MLBB)
-                </span>
+                <a
+                  href={siteConfig.contact.zaloUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono"
+                >
+                  {siteConfig.contact.zaloDisplay} ({siteConfig.contact.zaloName})
+                </a>
               </div>
 
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                   Email CSKH
                 </span>
-                <span className="text-slate-300">hotro@mlbbstore.vn</span>
+                <a
+                  href={`mailto:${siteConfig.contact.email}`}
+                  className="text-slate-300 hover:text-gold-400 transition-colors"
+                >
+                  {siteConfig.contact.email}
+                </a>
               </div>
 
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                   Thời Gian Làm Việc
                 </span>
-                <span className="text-slate-300">08:00 - 24:00 hàng ngày</span>
+                <span className="text-slate-300">{siteConfig.contact.workingHours}</span>
               </div>
             </div>
           </div>
