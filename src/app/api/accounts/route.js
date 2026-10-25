@@ -17,6 +17,7 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const rank = searchParams.get("rank");
+    const collectionTier = searchParams.get("collectionTier") || searchParams.get("tier");
     const status = searchParams.get("status");
 
     // Xử lý tham số phân trang
@@ -26,7 +27,17 @@ export async function GET(request) {
 
     // Xây dựng điều kiện lọc
     const filter = {};
-    if (rank && rank !== "ALL") {
+
+    // Lọc theo Điểm Sưu Tập (hoặc Rank tương đương nếu tài khoản cũ chưa lưu tier)
+    if (collectionTier && collectionTier !== "ALL") {
+      filter.$or = [
+        { collectionTier: collectionTier },
+        ...(collectionTier === "Sưu tập thiên hà" ? [{ rank: "Chí Tôn" }] : []),
+        ...(collectionTier === "Nhà đại sưu tập" ? [{ rank: "Vinh Quang Thần Thoại" }] : []),
+        ...(collectionTier === "Sưu tập siêu cấp" ? [{ rank: "Thần Thoại" }] : []),
+        ...(collectionTier === "Sưu tập truyền kỳ" ? [{ rank: { $in: ["Huyền Thoại", "Sử Thi"] } }] : []),
+      ];
+    } else if (rank && rank !== "ALL") {
       filter.rank = rank;
     }
 

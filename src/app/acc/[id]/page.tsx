@@ -433,6 +433,17 @@ export default function AccountDetailPage() {
                 <span>{account.rank}</span>
               </div>
 
+              <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                {account.collectionTier ||
+                  (account.rank === "Chí Tôn"
+                    ? "Sưu tập thiên hà"
+                    : account.rank === "Vinh Quang Thần Thoại"
+                    ? "Nhà đại sưu tập"
+                    : account.rank === "Thần Thoại"
+                    ? "Sưu tập siêu cấp"
+                    : "Sưu tập truyền kỳ")}
+              </span>
+
               {isAvailable ? (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />

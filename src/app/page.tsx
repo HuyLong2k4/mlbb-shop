@@ -7,7 +7,7 @@ import {
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
-import { MLBBMockAccount, MLBBAccountRank } from "@/data/mockAccounts";
+import { MLBBMockAccount, MLBBCollectionTier } from "@/data/mockAccounts";
 import Pagination from "@/components/Pagination";
 
 // Format tiền tệ VNĐ
@@ -15,28 +15,38 @@ const formatVND = (amount: number) => {
   return new Intl.NumberFormat("vi-VN").format(amount) + " ₫";
 };
 
-// Cấu hình style đại diện cho từng bậc Rank MLBB (Tối giản Typography)
-const getRankBadgeInfo = (rank: MLBBAccountRank) => {
-  switch (rank) {
-    case "Chí Tôn":
+// Cấu hình style đại diện cho từng Cấp Điểm Sưu Tập MLBB
+const getTierBadgeInfo = (tier?: string, fallbackRank?: string) => {
+  const currentTier =
+    tier ||
+    (fallbackRank === "Chí Tôn"
+      ? "Sưu tập thiên hà"
+      : fallbackRank === "Vinh Quang Thần Thoại"
+      ? "Nhà đại sưu tập"
+      : fallbackRank === "Thần Thoại"
+      ? "Sưu tập siêu cấp"
+      : "Sưu tập truyền kỳ");
+
+  switch (currentTier) {
+    case "Sưu tập thiên hà":
       return {
-        badgeStyle: "bg-red-500/20 text-red-300 border-red-500/40",
+        label: "Sưu tập thiên hà",
+        badgeStyle: "bg-purple-500/20 text-purple-300 border-purple-500/40 font-bold",
       };
-    case "Vinh Quang Thần Thoại":
+    case "Nhà đại sưu tập":
       return {
+        label: "Nhà đại sưu tập",
         badgeStyle: "bg-amber-500/20 text-gold-300 border-gold-500/40 font-bold",
       };
-    case "Thần Thoại":
+    case "Sưu tập siêu cấp":
       return {
-        badgeStyle: "bg-amber-500/10 text-gold-400 border-gold-500/30 font-semibold",
+        label: "Sưu tập siêu cấp",
+        badgeStyle: "bg-red-500/20 text-red-300 border-red-500/40 font-semibold",
       };
-    case "Huyền Thoại":
-      return {
-        badgeStyle: "bg-orange-500/15 text-orange-300 border-orange-500/30",
-      };
-    case "Sử Thi":
+    case "Sưu tập truyền kỳ":
     default:
       return {
+        label: "Sưu tập truyền kỳ",
         badgeStyle: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
       };
   }
@@ -69,7 +79,7 @@ export default function HomePage() {
   });
 
   // State bộ lọc giao diện
-  const [selectedRank, setSelectedRank] = useState<string>("ALL");
+  const [selectedTier, setSelectedTier] = useState<string>("ALL");
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("ALL");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
@@ -84,8 +94,8 @@ export default function HomePage() {
       params.append("limit", "12"); // 12 tài khoản / trang
       params.append("status", "Còn hàng"); // Ẩn các acc đã bán, chỉ lấy tài khoản Còn hàng
 
-      if (selectedRank && selectedRank !== "ALL") {
-        params.append("rank", selectedRank);
+      if (selectedTier && selectedTier !== "ALL") {
+        params.append("collectionTier", selectedTier);
       }
 
       const queryString = params.toString();
@@ -118,9 +128,9 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedRank]);
+  }, [selectedTier]);
 
-  // Gọi API mỗi khi Rank thay đổi (quay về trang 1)
+  // Gọi API mỗi khi Bộ Lọc Điểm Sưu Tập thay đổi (quay về trang 1)
   useEffect(() => {
     fetchAccounts(1);
   }, [fetchAccounts]);
@@ -175,7 +185,7 @@ export default function HomePage() {
   }, [accounts, selectedPriceRange, searchKeyword]);
 
   const handleResetFilter = () => {
-    setSelectedRank("ALL");
+    setSelectedTier("ALL");
     setSelectedPriceRange("ALL");
     setSearchKeyword("");
     fetchAccounts(1);
@@ -236,25 +246,24 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 border-t border-navy-800">
-            {/* Lọc theo Bậc Rank */}
+            {/* Lọc theo Điểm Sưu Tập */}
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                Bậc Rank cao nhất
+                Điểm Sưu Tập
               </label>
               <select
-                value={selectedRank}
+                value={selectedTier}
                 onChange={(e) => {
-                  setSelectedRank(e.target.value);
+                  setSelectedTier(e.target.value);
                   setCurrentPage(1);
                 }}
                 className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 transition-colors cursor-pointer"
               >
-                <option value="ALL">Tất cả Rank</option>
-                <option value="Chí Tôn">Chí Tôn (Immortal)</option>
-                <option value="Vinh Quang Thần Thoại">Vinh Quang Thần Thoại</option>
-                <option value="Thần Thoại">Thần Thoại (Mythic)</option>
-                <option value="Huyền Thoại">Huyền Thoại (Legend)</option>
-                <option value="Sử Thi">Sử Thi (Epic)</option>
+                <option value="ALL">Tất cả Điểm Sưu Tập</option>
+                <option value="Sưu tập thiên hà">Sưu tập thiên hà</option>
+                <option value="Nhà đại sưu tập">Nhà đại sưu tập</option>
+                <option value="Sưu tập siêu cấp">Sưu tập siêu cấp</option>
+                <option value="Sưu tập truyền kỳ">Sưu tập truyền kỳ</option>
               </select>
             </div>
 
@@ -367,7 +376,7 @@ export default function HomePage() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
               {filteredAccounts.map((account) => {
-                const rankInfo = getRankBadgeInfo(account.rank);
+                const tierInfo = getTierBadgeInfo(account.collectionTier, account.rank);
                 const isAvailable = account.status === "Còn hàng";
                 const displayImg =
                   (account as any).images?.[0] ||
@@ -397,8 +406,8 @@ export default function HomePage() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-navy-950 p-4">
-                          <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">
-                            {account.rank}
+                          <span className="text-xs font-bold text-slate-300 uppercase tracking-widest text-center">
+                            {tierInfo.label}
                           </span>
                         </div>
                       )}
@@ -423,10 +432,10 @@ export default function HomePage() {
                         )}
                       </div>
 
-                      {/* Huy hiệu Rank - Chỉ chữ, không icon */}
+                      {/* Huy hiệu Điểm Sưu Tập - Chỉ chữ, không icon */}
                       <div className="absolute bottom-2.5 left-2.5 z-20">
-                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${rankInfo.badgeStyle}`}>
-                          {account.rank}
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${tierInfo.badgeStyle}`}>
+                          {tierInfo.label}
                         </span>
                       </div>
                     </div>

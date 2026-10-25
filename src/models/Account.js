@@ -100,6 +100,22 @@ const AccountSchema = new mongoose.Schema(
       index: true,
     },
 
+    // Cấp bậc Điểm Sưu Tập trong MLBB
+    collectionTier: {
+      type: String,
+      enum: {
+        values: [
+          "Sưu tập truyền kỳ",
+          "Sưu tập siêu cấp",
+          "Nhà đại sưu tập",
+          "Sưu tập thiên hà",
+        ],
+        message: "{VALUE} không phải là bậc Điểm sưu tập hợp lệ",
+      },
+      default: "Sưu tập truyền kỳ",
+      index: true,
+    },
+
     // Số lượng tướng sở hữu
     heroCount: {
       type: Number,

@@ -7,6 +7,7 @@ export interface AccountProps {
   code: string;
   category: "VIP" | "SINH_VIEN";
   rank: string;
+  collectionTier?: string;
   skinCount: number;
   heroCount: number;
   highlightSkin: string;
@@ -70,10 +71,10 @@ export default function AccountCard({ account }: { account: AccountProps }) {
           </span>
         </div>
 
-        {/* Rank Badge on bottom overlay */}
+        {/* Rank / Collection Tier Badge on bottom overlay */}
         <div className="absolute bottom-2.5 left-2.5 z-20">
           <span className="text-[10px] font-bold uppercase tracking-wider text-gold-300 bg-navy-950/90 px-2.5 py-0.5 rounded border border-navy-750">
-            {account.rank}
+            {account.collectionTier || account.rank}
           </span>
         </div>
       </div>

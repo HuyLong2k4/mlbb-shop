@@ -26,6 +26,7 @@ interface AccountFormData {
   price: number | "";
   originalPrice: number | "";
   rank: string;
+  collectionTier: string;
   heroCount: number | "";
   skinCount: number | "";
   highlightSkins: string; // Phân cách bằng dấu phẩy
@@ -42,6 +43,7 @@ const initialForm: AccountFormData = {
   price: "",
   originalPrice: "",
   rank: "Thần Thoại",
+  collectionTier: "Sưu tập siêu cấp",
   heroCount: 80,
   skinCount: 100,
   highlightSkins: "Gusion - Cosmic Gleam (Legend), Chou - Iori Yagami (KOF)",
@@ -323,6 +325,7 @@ export default function AdminPage() {
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       rank: formData.rank,
+      collectionTier: formData.collectionTier,
       heroCount: Number(formData.heroCount) || 0,
       skinCount: Number(formData.skinCount) || 0,
       highlightSkins: skinsArray,
@@ -499,8 +502,8 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Hàng 2: Giá Bán, Giá Gốc, Bậc Rank, Trạng Thái */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Hàng 2: Giá Bán, Giá Gốc, Điểm Sưu Tập, Bậc Rank, Trạng Thái */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
                 Giá bán (VNĐ) <span className="text-red-400">*</span>
@@ -530,6 +533,23 @@ export default function AdminPage() {
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm font-mono text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-gold-500"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
+                Điểm Sưu Tập <span className="text-red-400">*</span>
+              </label>
+              <select
+                name="collectionTier"
+                value={formData.collectionTier}
+                onChange={handleChange}
+                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 cursor-pointer"
+              >
+                <option value="Sưu tập thiên hà">Sưu tập thiên hà</option>
+                <option value="Nhà đại sưu tập">Nhà đại sưu tập</option>
+                <option value="Sưu tập siêu cấp">Sưu tập siêu cấp</option>
+                <option value="Sưu tập truyền kỳ">Sưu tập truyền kỳ</option>
+              </select>
             </div>
 
             <div>
@@ -841,7 +861,7 @@ export default function AdminPage() {
                   <th className="py-3 px-3">Ảnh</th>
                   <th className="py-3 px-3">Tiêu đề</th>
                   <th className="py-3 px-3">Giá bán</th>
-                  <th className="py-3 px-3">Rank</th>
+                  <th className="py-3 px-3">Điểm Sưu Tập / Rank</th>
                   <th className="py-3 px-3">Tướng / Skin</th>
                   <th className="py-3 px-3">Trạng thái</th>
                   <th className="py-3 px-3 text-right">Thao tác</th>
@@ -878,9 +898,12 @@ export default function AdminPage() {
                         {new Intl.NumberFormat("vi-VN").format(acc.price)} ₫
                       </td>
                       <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy-950 border border-navy-700 text-slate-300">
-                          {acc.rank}
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy-950 border border-gold-500/30 text-gold-300 inline-block mb-1">
+                          {acc.collectionTier || "Sưu tập truyền kỳ"}
                         </span>
+                        <div className="text-[10px] text-slate-400">
+                          {acc.rank}
+                        </div>
                       </td>
                       <td className="py-3 px-3 text-slate-400 font-mono">
                         {acc.heroCount} / {acc.skinCount}

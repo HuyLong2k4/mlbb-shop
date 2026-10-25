@@ -5,6 +5,12 @@ export type MLBBAccountRank =
   | "Vinh Quang Thần Thoại"
   | "Chí Tôn";
 
+export type MLBBCollectionTier =
+  | "Sưu tập truyền kỳ"
+  | "Sưu tập siêu cấp"
+  | "Nhà đại sưu tập"
+  | "Sưu tập thiên hà";
+
 export type AccountStatus = "Còn hàng" | "Đã bán";
 
 export interface AccountWinRate {
@@ -19,6 +25,7 @@ export interface MLBBMockAccount {
   price: number; // Đơn vị: VNĐ
   originalPrice?: number; // Giá gốc trước giảm
   rank: MLBBAccountRank;
+  collectionTier?: MLBBCollectionTier;
   heroCount: number;
   skinCount: number;
   highlightSkins: string[];
@@ -43,6 +50,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 4850000,
     originalPrice: 6200000,
     rank: "Chí Tôn",
+    collectionTier: "Sưu tập thiên hà",
     heroCount: 125,
     skinCount: 412,
     highlightSkins: [
@@ -83,6 +91,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 3600000,
     originalPrice: 4800000,
     rank: "Vinh Quang Thần Thoại",
+    collectionTier: "Nhà đại sưu tập",
     heroCount: 125,
     skinCount: 345,
     highlightSkins: [
@@ -120,6 +129,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 2450000,
     originalPrice: 3200000,
     rank: "Thần Thoại",
+    collectionTier: "Sưu tập siêu cấp",
     heroCount: 118,
     skinCount: 268,
     highlightSkins: [
@@ -154,6 +164,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 1850000,
     originalPrice: 2500000,
     rank: "Thần Thoại",
+    collectionTier: "Sưu tập siêu cấp",
     heroCount: 105,
     skinCount: 195,
     highlightSkins: [
@@ -187,6 +198,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 850000,
     originalPrice: 1200000,
     rank: "Huyền Thoại",
+    collectionTier: "Sưu tập truyền kỳ",
     heroCount: 92,
     skinCount: 135,
     highlightSkins: [
@@ -220,6 +232,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 490000,
     originalPrice: 750000,
     rank: "Huyền Thoại",
+    collectionTier: "Sưu tập truyền kỳ",
     heroCount: 78,
     skinCount: 88,
     highlightSkins: [
@@ -250,6 +263,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 169000,
     originalPrice: 280000,
     rank: "Sử Thi",
+    collectionTier: "Sưu tập truyền kỳ",
     heroCount: 56,
     skinCount: 45,
     highlightSkins: [
@@ -281,6 +295,7 @@ export const mockAccounts: MLBBMockAccount[] = [
     price: 89000,
     originalPrice: 150000,
     rank: "Sử Thi",
+    collectionTier: "Sưu tập truyền kỳ",
     heroCount: 42,
     skinCount: 28,
     highlightSkins: [
