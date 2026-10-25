@@ -37,8 +37,8 @@ export const siteConfig = {
   socials: {
     facebook: "https://facebook.com/mlbbstore.official",
     facebookDisplay: "fb.com/mlbbstore.official",
-    telegram: "https://t.me/mlbbstore_cskh",
-    telegramDisplay: "@mlbbstore_cskh",
+    group: "https://t.me/mlbbstore_cskh",
+    groupDisplay: "@mlbbstore_cskh",
     zalo: `https://zalo.me/${cleanPhone || "0988123456"}`,
   },
 

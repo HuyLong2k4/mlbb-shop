@@ -123,15 +123,6 @@ export default function Footer() {
                   <ExternalLink className="w-3 h-3 text-slate-500" />
                 </a>
                 <a
-                  href={siteConfig.socials.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-850 text-slate-300 hover:text-gold-400 border border-navy-800 hover:border-gold-500/40 transition-colors inline-flex items-center gap-1.5"
-                >
-                  <span>Telegram</span>
-                  <ExternalLink className="w-3 h-3 text-slate-500" />
-                </a>
-                <a
                   href={siteConfig.contact.zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -139,6 +130,15 @@ export default function Footer() {
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
                   <span>Zalo CSKH</span>
+                </a>
+                <a
+                  href={siteConfig.socials.group}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-850 text-slate-300 hover:text-gold-400 border border-navy-800 hover:border-gold-500/40 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <span>Cộng đồng</span>
+                  <ExternalLink className="w-3 h-3 text-slate-500" />
                 </a>
               </div>
             </div>
@@ -265,12 +265,6 @@ export default function Footer() {
               </Link>
 
               <div className="p-3 bg-gradient-to-b from-navy-900 to-navy-950 border-t border-navy-800 text-center space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-navy-850 border border-gold-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gold-300">
-                    Sàn Uy Tín #1 VN
-                  </span>
-                </div>
                 <a
                   href={siteConfig.contact.zaloUrl}
                   target="_blank"
