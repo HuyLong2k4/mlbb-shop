@@ -71,6 +71,7 @@ export default function AdminPage() {
   // State quản lý danh sách URL ảnh Cloudinary đã tải lên
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string>("");
 
   // Danh sách tài khoản hiện có trong Database để đối soát nhanh
   const [existingAccounts, setExistingAccounts] = useState<any[]>([]);
@@ -109,7 +110,69 @@ export default function AdminPage() {
     }));
   };
 
-  // Xử lý chọn nhiều file ảnh & tự động upload lên Cloudinary qua /api/upload
+  // Nén ảnh nếu dung lượng quá lớn (> 2MB) trước khi tải lên Cloudinary
+  const compressImageIfNeeded = async (file: File): Promise<File> => {
+    if (file.size <= 2 * 1024 * 1024 || !file.type.startsWith("image/")) {
+      return file;
+    }
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 1920;
+          const MAX_HEIGHT = 1080;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File(
+                  [blob],
+                  file.name.replace(/\.[^.]+$/, ".webp"),
+                  {
+                    type: "image/webp",
+                    lastModified: Date.now(),
+                  }
+                );
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/webp",
+            0.85
+          );
+        };
+        img.onerror = () => resolve(file);
+      };
+      reader.onerror = () => resolve(file);
+    });
+  };
+
+  // Xử lý chọn nhiều file ảnh & tự động upload từng ảnh lên Cloudinary
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -118,34 +181,91 @@ export default function AdminPage() {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    const uploadFormData = new FormData();
-    Array.from(files).forEach((file) => {
-      uploadFormData.append("files", file);
-    });
+    const fileList = Array.from(files);
+    const successfullyUploadedUrls: string[] = [];
+    let errorCount = 0;
+    let lastErrorMsg = "";
 
-    try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadFormData,
-      });
+    for (let i = 0; i < fileList.length; i++) {
+      const originalFile = fileList[i];
+      setUploadProgress(
+        `Đang xử lý & tải lên ảnh ${i + 1}/${fileList.length} (${originalFile.name})...`
+      );
 
-      const result = await res.json();
+      try {
+        const fileToUpload = await compressImageIfNeeded(originalFile);
+        let imageUrl = "";
 
-      if (!res.ok || !result.success) {
-        throw new Error(
-          result.message || "Lỗi khi upload ảnh lên Cloudinary. Vui lòng kiểm tra API Keys."
+        // 1. Thử tải trực tiếp lên Cloudinary bằng Unsigned Preset (Nhanh, không cần API Secret, không giới hạn Vercel)
+        try {
+          const directFormData = new FormData();
+          directFormData.append("file", fileToUpload);
+          directFormData.append("upload_preset", "mlbb_preset");
+
+          const directRes = await fetch("https://api.cloudinary.com/v1_1/daksfvybx/image/upload", {
+            method: "POST",
+            body: directFormData,
+          });
+
+          const directData = await directRes.json();
+          if (directRes.ok && directData.secure_url) {
+            imageUrl = directData.secure_url;
+          }
+        } catch {
+          // Bỏ qua nếu chưa cấu hình unsigned preset, chuyển sang fallback
+        }
+
+        // 2. Nếu direct unsigned chưa có preset, fallback qua API route nội bộ
+        if (!imageUrl) {
+          const singleFormData = new FormData();
+          singleFormData.append("file", fileToUpload);
+
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            body: singleFormData,
+          });
+
+          const result = await res.json();
+          if (res.ok && result.success && result.urls?.length > 0) {
+            imageUrl = result.urls[0];
+          } else {
+            errorCount++;
+            lastErrorMsg = result?.message || `Lỗi tải ảnh ${originalFile.name}`;
+            console.error(`Lỗi tải ảnh ${originalFile.name}:`, lastErrorMsg);
+          }
+        }
+
+        if (imageUrl) {
+          successfullyUploadedUrls.push(imageUrl);
+        }
+      } catch (uploadErr: any) {
+        errorCount++;
+        lastErrorMsg = uploadErr?.message || "Lỗi kết nối khi gửi ảnh.";
+        console.error(`Lỗi kết nối khi tải ảnh ${originalFile.name}:`, uploadErr);
+      }
+    }
+
+    if (successfullyUploadedUrls.length > 0) {
+      setUploadedImages((prev) => [...prev, ...successfullyUploadedUrls]);
+      if (errorCount === 0) {
+        setSuccessMsg(
+          `📸 Đã upload thành công toàn bộ ${successfullyUploadedUrls.length} ảnh lên Cloudinary!`
+        );
+      } else {
+        setSuccessMsg(
+          `📸 Đã upload ${successfullyUploadedUrls.length} ảnh thành công (${errorCount} ảnh bị lỗi).`
         );
       }
-
-      // Thêm các URL mới vào danh sách ảnh hiện tại
-      setUploadedImages((prev) => [...prev, ...result.urls]);
-      setSuccessMsg(`📸 Đã upload thành công ${result.urls.length} ảnh lên Cloudinary!`);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Quá trình upload ảnh gặp sự cố.");
-    } finally {
-      setIsUploading(false);
-      e.target.value = ""; // Reset input để cho phép chọn lại
+    } else {
+      setErrorMsg(
+        lastErrorMsg ||
+          "Không thể tải ảnh lên Cloudinary. Vui lòng kiểm tra lại kích thước ảnh hoặc đường truyền mạng."
+      );
     }
+
+    setIsUploading(false);
+    setUploadProgress("");
+    e.target.value = ""; // Reset input để cho phép chọn lại
   };
 
   // Xóa ảnh đã upload khỏi danh sách trước khi lưu
@@ -491,7 +611,7 @@ export default function AdminPage() {
                   <>
                     <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
                     <span className="text-xs font-bold text-gold-300">
-                      Đang upload ảnh lên Cloudinary... Vui lòng đợi
+                      {uploadProgress || "Đang tải ảnh lên Cloudinary... Vui lòng đợi"}
                     </span>
                   </>
                 ) : (
@@ -501,7 +621,7 @@ export default function AdminPage() {
                       Bấm vào đây để chọn nhiều file ảnh từ máy tính
                     </span>
                     <span className="text-[11px] text-slate-500">
-                      Hỗ trợ tải lên cùng lúc nhiều ảnh chụp màn hình
+                      Tự động tối ưu dung lượng & upload trực tiếp lên Cloudinary
                     </span>
                   </>
                 )}

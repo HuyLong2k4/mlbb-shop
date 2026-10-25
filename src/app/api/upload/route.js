@@ -1,32 +1,31 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
-// Cấu hình Cloudinary
+// Cấu hình Cloudinary (Dùng biến môi trường nếu có, hoặc dùng fallback có sẵn)
+const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "daksfvybx";
+const API_KEY = process.env.CLOUDINARY_API_KEY || "473819711181877";
+const API_SECRET = process.env.CLOUDINARY_API_SECRET || "yGS_PcZrzSubqAqQ8G-k2HsMof5o";
+
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: CLOUD_NAME,
+  api_key: API_KEY,
+  api_secret: API_SECRET,
   secure: true,
 });
 
 /**
  * POST /api/upload
- * Tiếp nhận nhiều file ảnh từ Form (multipart/form-data)
- * Upload trực tiếp lên Cloudinary và trả về mảng các URL ảnh
+ * Tiếp nhận file ảnh từ Form (multipart/form-data)
+ * Upload trực tiếp lên Cloudinary và trả về mảng URL ảnh an toàn (HTTPS)
  */
 export async function POST(request) {
   try {
-    // 1. Kiểm tra cấu hình Cloudinary trong biến môi trường
-    if (
-      !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET
-    ) {
+    // 1. Kiểm tra cấu hình Cloudinary
+    if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Chưa cấu hình Cloudinary! Vui lòng thêm CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY và CLOUDINARY_API_SECRET vào file .env.local",
+          message: "Chưa cấu hình API Keys cho Cloudinary.",
         },
         { status: 500 }
       );
@@ -34,7 +33,7 @@ export async function POST(request) {
 
     // 2. Đọc formData từ request
     const formData = await request.formData();
-    // Lấy danh sách các files (hỗ trợ cả trường 'files' và 'file')
+    // Lấy danh sách các files (hỗ trợ cả 'files' và 'file')
     const files = formData.getAll("files").concat(formData.getAll("file"));
 
     if (!files || files.length === 0) {
@@ -58,7 +57,7 @@ export async function POST(request) {
       const uploadPromise = new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
-            folder: "mlbb_accounts", // Thư mục lưu trữ trên Cloudinary
+            folder: "mlbb_accounts",
             resource_type: "image",
             transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
           },
@@ -71,8 +70,6 @@ export async function POST(request) {
                 url: result.secure_url,
                 publicId: result.public_id,
                 name: file.name,
-                width: result.width,
-                height: result.height,
               });
             }
           }
@@ -84,10 +81,8 @@ export async function POST(request) {
       uploadPromises.push(uploadPromise);
     }
 
-    // Đợi tất cả các file tải lên hoàn tất
+    // Đợi tất cả file trong request này tải lên xong
     const uploadResults = await Promise.all(uploadPromises);
-
-    // Mảng chỉ chứa các URL an toàn (HTTPS)
     const urls = uploadResults.map((item) => item.url);
 
     return NextResponse.json({
@@ -98,11 +93,16 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Lỗi API Upload:", error);
+    let errorMsg = error?.message || "Quá trình upload ảnh lên Cloudinary thất bại.";
+    if (typeof errorMsg === "string" && errorMsg.includes("api_secret mismatch")) {
+      errorMsg =
+        "Khóa bí mật API Secret không khớp (api_secret mismatch). Vui lòng đăng nhập console.cloudinary.com để copy lại chính xác API Secret mới nhất.";
+    }
+
     return NextResponse.json(
       {
         success: false,
-        message: "Quá trình upload ảnh lên Cloudinary thất bại.",
-        error: error.message,
+        message: errorMsg,
       },
       { status: 500 }
     );
