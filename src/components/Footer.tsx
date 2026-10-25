@@ -66,6 +66,21 @@ export default function Footer() {
               </div>
             </Link>
 
+            {/* Banner nhỏ của shop */}
+            <div className="pt-1">
+              <Link
+                href="/"
+                className="block relative rounded-xl overflow-hidden border border-gold-500/30 hover:border-gold-400/60 shadow-navy-card hover:shadow-gold-sm transition-all duration-300 max-w-xs sm:max-w-sm group"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/footer-banner.png"
+                  alt={`${siteConfig.name} Banner`}
+                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </Link>
+            </div>
+
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-6">
               {siteConfig.description}
             </p>
@@ -139,7 +154,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Cột 3: Hỗ Trợ & Chính Sách */}
+          {/* Cột 3: Hỗ Trợ & Chính Sách
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 mb-4 pb-2 border-b border-navy-850">
               Hỗ Trợ & Quy Định
@@ -178,7 +193,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Cột 4: Liên Hệ Trực Tiếp (Typography phân cấp rõ ràng) */}
           <div>
@@ -231,27 +246,6 @@ export default function Footer() {
                 <span className="text-slate-300">{siteConfig.contact.workingHours}</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Phương thức thanh toán - Typography tối giản */}
-        <div className="mt-12 pt-6 border-t border-navy-850 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-slate-400 font-medium">
-            Hỗ trợ đa dạng phương thức thanh toán an toàn:
-          </span>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="px-3 py-1 rounded bg-navy-900 border border-navy-800 text-slate-300 font-medium">
-              Chuyển khoản VietQR / Napas247
-            </span>
-            <span className="px-3 py-1 rounded bg-navy-900 border border-navy-800 text-slate-300 font-medium">
-              Ví MoMo
-            </span>
-            <span className="px-3 py-1 rounded bg-navy-900 border border-navy-800 text-slate-300 font-medium">
-              ZaloPay
-            </span>
-            <span className="px-3 py-1 rounded bg-navy-900 border border-navy-800 text-slate-300 font-medium">
-              Thẻ cào tự động
-            </span>
           </div>
         </div>
       </div>

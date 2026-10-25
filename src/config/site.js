@@ -25,11 +25,11 @@ export const siteConfig = {
     hotlineEmergency: "1900.8888",
     zalo: cleanPhone || "0988123456",
     zaloDisplay: "0988.123.456",
-    zaloName: "Admin MLBB",
+    zaloName: "CSKH STORE",
     zaloUrl: `https://zalo.me/${cleanPhone || "0988123456"}`,
     email: "hotro@mlbbstore.vn",
-    address: "Tòa nhà Keangnam Landmark 72, Phạm Hùng, Nam Từ Liêm, Hà Nội",
-    workingHours: "08:00 - 24:00 hàng ngày (kể cả Lễ, Tết)",
+    // address: "Tòa nhà Keangnam Landmark 72, Phạm Hùng, Nam Từ Liêm, Hà Nội",
+    workingHours: "08:00 - 24:00 hàng ngày",
     supportResponseTime: "Phản hồi nhanh trong 1 - 3 phút",
   },
 
@@ -44,8 +44,8 @@ export const siteConfig = {
 
   // Cam kết vàng dịch vụ
   commitments: {
-    warranty: "Bảo hành vĩnh viễn không tranh chấp",
-    deliveryTime: "Giao dịch & đổi pass trong 30 giây",
+    warranty: "Bảo hành vĩnh viễn",
+    deliveryTime: "Giao dịch & đổi gmail trong 30 giây",
     security: "100% Trắng Thông Tin - Đổi Gmail ngay",
     refund: "Hoàn tiền 100% nếu sai mô tả",
   },
