@@ -168,22 +168,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/"
-                  className="text-slate-400 hover:text-gold-400 transition-colors block"
-                >
-                  Điểm Sưu Tập Thiên Hà
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/"
-                  className="text-slate-400 hover:text-gold-400 transition-colors block"
-                >
-                  Kho Nick Thần Thoại
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/lien-he"
                   className="text-slate-400 hover:text-gold-400 transition-colors block"
                 >
