@@ -100,14 +100,22 @@ export default function Navbar() {
         {/* Main Navbar */}
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Logo Thương Hiệu - Tối giản Typography không icon rườm rà */}
-            <Link href="/" className="flex items-baseline gap-2 group shrink-0">
-              <span className="text-xl sm:text-2xl font-black tracking-tight uppercase text-slate-100 font-sans">
-                MLBB <span className="text-gold-400">STORE</span>
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden sm:inline-block">
-                eSports Shop
-              </span>
+            {/* Logo Thương Hiệu */}
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="MLBB STORE Logo"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-lg group-hover:scale-105 transition-transform"
+              />
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl font-black tracking-tight uppercase text-slate-100 font-sans">
+                  MLBB <span className="text-gold-400">STORE</span>
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden sm:inline-block">
+                  eSports Shop
+                </span>
+              </div>
             </Link>
 
             {/* Menu Desktop Nằm Ngang - Hoàn toàn là text sạch sẽ */}
@@ -196,9 +204,17 @@ export default function Navbar() {
       >
         <div className="space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-navy-850">
-            <span className="text-base font-black uppercase text-slate-100">
-              MLBB <span className="text-gold-400">STORE</span>
-            </span>
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="MLBB STORE Logo"
+                className="w-7 h-7 object-contain rounded-md"
+              />
+              <span className="text-base font-black uppercase text-slate-100">
+                MLBB <span className="text-gold-400">STORE</span>
+              </span>
+            </div>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}

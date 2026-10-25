@@ -73,9 +73,11 @@ export const metadata: Metadata = {
     },
   },
 
-  // Icon
+  // Icon Tab Trình Duyệt (Favicon)
   icons: {
-    icon: "/favicon.ico",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 

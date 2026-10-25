@@ -48,13 +48,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12">
           {/* Cột 1: Thông tin thương hiệu (Chiếm 2 cột trên Desktop) */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-baseline gap-2">
-              <span className="text-2xl font-black tracking-tight uppercase text-slate-100">
-                MLBB <span className="text-gold-400">STORE</span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                eSports
-              </span>
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="MLBB STORE Logo"
+                className="w-8 h-8 object-contain rounded-lg"
+              />
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-black tracking-tight uppercase text-slate-100">
+                  MLBB <span className="text-gold-400">STORE</span>
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  eSports
+                </span>
+              </div>
             </Link>
 
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-6">
