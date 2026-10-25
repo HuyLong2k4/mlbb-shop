@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   Share2,
   MessageCircle,
+  RefreshCw,
 } from "lucide-react";
 import {
   mockAccounts,
@@ -33,7 +34,7 @@ const formatVND = (amount: number) => {
 };
 
 // Cấu hình huy hiệu Rank MLBB
-const getRankBadgeInfo = (rank: MLBBAccountRank) => {
+const getRankBadgeInfo = (rank: MLBBAccountRank | string) => {
   switch (rank) {
     case "Chí Tôn":
       return {
@@ -76,14 +77,66 @@ export default function AccountDetailPage() {
   const params = useParams();
   const accountId = params?.id as string;
 
-  // Tìm tài khoản theo mã ID trong mock data
-  const account = mockAccounts.find(
-    (acc) => acc.id.toLowerCase() === accountId?.toLowerCase()
-  );
-
+  const [account, setAccount] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // Tải chi tiết tài khoản từ API MongoDB (/api/accounts/[id])
+  useEffect(() => {
+    if (!accountId) return;
+
+    let isMounted = true;
+    const fetchAccountDetail = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/accounts/${encodeURIComponent(accountId)}`, {
+          cache: "no-store",
+        });
+        const data = await res.json();
+
+        if (data.success && data.data && isMounted) {
+          setAccount(data.data);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Lỗi khi tải từ API MongoDB, dùng mock fallback:", err);
+      }
+
+      // Fallback tìm trong mock data nếu chưa có API hoặc kết nối DB chậm
+      const mockAcc = mockAccounts.find(
+        (acc) => acc.id.toLowerCase() === accountId?.toLowerCase()
+      );
+      if (mockAcc && isMounted) {
+        setAccount(mockAcc);
+      }
+
+      if (isMounted) {
+        setLoading(false);
+      }
+    };
+
+    fetchAccountDetail();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [accountId]);
+
+  // Trạng thái đang tải dữ liệu
+  if (loading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center space-y-4">
+        <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
+        <p className="text-sm font-bold uppercase tracking-wider text-slate-300">
+          Đang tải thông tin tài khoản #{accountId}...
+        </p>
+      </div>
+    );
+  }
+
+  // Trạng thái không tìm thấy tài khoản
   if (!account) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-5">
@@ -93,6 +146,9 @@ export default function AccountDetailPage() {
         <h1 className="text-2xl font-black uppercase text-slate-100">
           Không tìm thấy tài khoản #{accountId}
         </h1>
+        <p className="text-xs text-slate-400 max-w-md mx-auto">
+          Tài khoản này có thể đã bị xóa hoặc mã ID không chính xác. Vui lòng quay lại danh sách để khám phá các tài khoản khác.
+        </p>
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-navy-950 bg-gold-400 hover:bg-gold-300 transition-colors"
@@ -104,15 +160,43 @@ export default function AccountDetailPage() {
     );
   }
 
-  const rankInfo = getRankBadgeInfo(account.rank);
+  const rankInfo = getRankBadgeInfo(account.rank || "Thần Thoại");
   const RankIcon = rankInfo.icon;
   const isAvailable = account.status === "Còn hàng";
-  const screenshots = account.screenshots || [];
+
+  // Chuẩn hóa danh sách ảnh (ưu tiên screenshots, fallback sang images URL)
+  const screenshots =
+    account.screenshots && account.screenshots.length > 0
+      ? account.screenshots
+      : account.images && account.images.length > 0
+      ? account.images.map((url: string, idx: number) => ({
+          id: idx + 1,
+          title: `Ảnh in-game #${idx + 1}`,
+          caption: `Chi tiết tài khoản #${account.id}`,
+          imageUrl: url,
+        }))
+      : [];
+
   const currentScreenshot = screenshots[activeImageIndex] || {
     id: 1,
     title: "Ảnh chụp màn hình game",
     caption: "Chi tiết tài khoản in-game",
+    imageUrl: "",
   };
+
+  const winRateData = account.winRate || {
+    overall: "60.0%",
+    totalMatches: 1000,
+    rankWinRate: "60.0%",
+  };
+
+  const highlightSkinsList: string[] = Array.isArray(account.highlightSkins)
+    ? account.highlightSkins
+    : [];
+
+  const emblemsList: string[] = Array.isArray(account.emblems)
+    ? account.emblems
+    : [];
 
   const handlePrevImage = () => {
     setActiveImageIndex((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1));
@@ -131,7 +215,7 @@ export default function AccountDetailPage() {
   };
 
   // Tin nhắn soạn sẵn gửi cho người bán qua Zalo
-  const adminMessage = `Chào shop, tôi muốn mua tài khoản MLBB mã ID: #${account.id} - Giá: ${formatVND(account.price)}`;
+  const adminMessage = `Chào shop, tôi muốn mua tài khoản MLBB mã ID: #${account.id} - Giá: ${formatVND(account.price || 0)}`;
 
   // Khi ấn Mua Ngay -> Chuyển thẳng đến Zalo người bán
   const handleBuyNow = () => {
@@ -147,9 +231,13 @@ export default function AccountDetailPage() {
       {/* Breadcrumb Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
         <div className="flex items-center gap-2">
-          <Link href="/" className="hover:text-gold-400 transition-colors">Trang chủ</Link>
+          <Link href="/" className="hover:text-gold-400 transition-colors">
+            Trang chủ
+          </Link>
           <span>/</span>
-          <Link href="/acc-vip" className="hover:text-gold-400 transition-colors">Danh sách Acc</Link>
+          <Link href="/acc-vip" className="hover:text-gold-400 transition-colors">
+            Danh sách Acc
+          </Link>
           <span>/</span>
           <span className="text-gold-400 font-mono font-bold">#{account.id}</span>
         </div>
@@ -164,7 +252,7 @@ export default function AccountDetailPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* BỐ CỤC CHÍNH: DESKTOP 2 CỘT (ẢNH TRÁI, INFO PHẢI) - MOBILE XẾP CHỒNG (FLEX-COL) */}
+      {/* BỐ CỤC CHÍNH: DESKTOP 2 CỘT (ẢNH TRÁI, INFO PHẢI) - MOBILE XẾP CHỒNG     */}
       {/* ========================================================================= */}
       <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         {/* ===================================================================== */}
@@ -189,9 +277,11 @@ export default function AccountDetailPage() {
                     #{account.id} • {currentScreenshot.title}
                   </span>
                 </div>
-                <div className="absolute bottom-2.5 right-2.5 z-20 px-2 py-0.5 rounded text-[10px] font-bold bg-black/80 text-slate-300">
-                  Ảnh {activeImageIndex + 1} / {screenshots.length}
-                </div>
+                {screenshots.length > 1 && (
+                  <div className="absolute bottom-2.5 right-2.5 z-20 px-2 py-0.5 rounded text-[10px] font-bold bg-black/80 text-slate-300">
+                    Ảnh {activeImageIndex + 1} / {screenshots.length}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="w-full h-full flex flex-col justify-between p-6 bg-gradient-to-br from-navy-900 via-navy-850 to-navy-950 relative overflow-hidden">
@@ -232,7 +322,7 @@ export default function AccountDetailPage() {
                     mlbbstore.vn • Uy tín 100%
                   </span>
                   <span className="font-mono">
-                    Ảnh {activeImageIndex + 1} / {screenshots.length}
+                    Ảnh {activeImageIndex + 1} / {Math.max(screenshots.length, 1)}
                   </span>
                 </div>
               </div>
@@ -262,36 +352,38 @@ export default function AccountDetailPage() {
           </div>
 
           {/* Dải ảnh Thumbnails chuyển nhanh */}
-          <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-            {screenshots.map((shot, idx) => (
-              <button
-                key={shot.id}
-                type="button"
-                onClick={() => setActiveImageIndex(idx)}
-                className={`relative aspect-[16/10] rounded-xl overflow-hidden p-1.5 text-left transition-all border cursor-pointer ${
-                  activeImageIndex === idx
-                    ? "border-gold-400 ring-2 ring-gold-400/40 bg-navy-850 shadow-gold-sm"
-                    : "border-navy-800 bg-navy-900 hover:border-navy-700 opacity-70 hover:opacity-100"
-                }`}
-              >
-                {shot.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={shot.imageUrl}
-                    alt={shot.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="h-full flex flex-col justify-between text-[10px]">
-                    <span className="font-mono font-bold text-gold-400">#0{idx + 1}</span>
-                    <span className="line-clamp-2 text-slate-300 font-semibold leading-tight">
-                      {shot.title}
-                    </span>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
+          {screenshots.length > 1 && (
+            <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
+              {screenshots.map((shot: any, idx: number) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`relative aspect-[16/10] rounded-xl overflow-hidden p-1.5 text-left transition-all border cursor-pointer ${
+                    activeImageIndex === idx
+                      ? "border-gold-400 ring-2 ring-gold-400/40 bg-navy-850 shadow-gold-sm"
+                      : "border-navy-800 bg-navy-900 hover:border-navy-700 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  {shot.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={shot.imageUrl}
+                      alt={shot.title || `Ảnh ${idx + 1}`}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="h-full flex flex-col justify-between text-[10px]">
+                      <span className="font-mono font-bold text-gold-400">#0{idx + 1}</span>
+                      <span className="line-clamp-2 text-slate-300 font-semibold leading-tight">
+                        {shot.title}
+                      </span>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Cam kết hỗ trợ */}
           <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
@@ -321,7 +413,9 @@ export default function AccountDetailPage() {
                 #{account.id}
               </span>
 
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider border shadow-sm ${rankInfo.badgeStyle}`}>
+              <div
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider border shadow-sm ${rankInfo.badgeStyle}`}
+              >
                 <RankIcon className="w-3.5 h-3.5" />
                 <span>{account.rank}</span>
               </div>
@@ -350,17 +444,21 @@ export default function AccountDetailPage() {
                   Giá bán công khai
                 </div>
                 <div className="text-2xl sm:text-3xl font-black text-gold-400 font-mono tracking-tight">
-                  {formatVND(account.price)}
+                  {formatVND(account.price || 0)}
                 </div>
               </div>
 
-              {account.originalPrice && (
+              {account.originalPrice && account.originalPrice > account.price && (
                 <div className="text-right">
                   <div className="text-xs text-slate-500 line-through">
                     {formatVND(account.originalPrice)}
                   </div>
                   <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-red-600 text-white">
-                    Tiết kiệm {Math.round(((account.originalPrice - account.price) / account.originalPrice) * 100)}%
+                    Tiết kiệm{" "}
+                    {Math.round(
+                      ((account.originalPrice - account.price) / account.originalPrice) * 100
+                    )}
+                    %
                   </span>
                 </div>
               )}
@@ -379,100 +477,115 @@ export default function AccountDetailPage() {
                   <span>Tỉ Lệ Thắng (Winrate)</span>
                 </div>
                 <span className="text-base font-black text-emerald-400 font-mono">
-                  {account.winRate.overall}
+                  {winRateData.overall}
                 </span>
               </div>
 
               <div className="w-full bg-navy-950 rounded-full h-2.5 overflow-hidden border border-navy-800">
                 <div
                   className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-1000"
-                  style={{ width: `${parseFloat(account.winRate.overall) || 65}%` }}
+                  style={{ width: `${parseFloat(winRateData.overall) || 60}%` }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-navy-800/80">
                 <div className="text-slate-400">
-                  Tổng số trận: <strong className="text-slate-200 font-mono">{account.winRate.totalMatches.toLocaleString("vi-VN")} trận</strong>
+                  Tổng số trận:{" "}
+                  <strong className="text-slate-200 font-mono">
+                    {Number(winRateData.totalMatches || 0).toLocaleString("vi-VN")} trận
+                  </strong>
                 </div>
                 <div className="text-slate-400 text-right">
-                  Winrate Rank: <strong className="text-gold-400 font-mono">{account.winRate.rankWinRate}</strong>
+                  Winrate Rank:{" "}
+                  <strong className="text-gold-400 font-mono">
+                    {winRateData.rankWinRate || winRateData.overall}
+                  </strong>
                 </div>
               </div>
             </div>
 
             {/* 2. Bảng ngọc (Emblems) */}
-            <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
-                  <Award className="w-4 h-4 text-gold-400" />
-                  <span>Bảng Ngọc & Bổ Trợ (Emblems)</span>
-                </div>
-                <span className="text-[11px] font-bold text-gold-400 uppercase">
-                  {account.emblems.length} Bảng chính
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5">
-                {account.emblems.map((emblem, idx) => (
-                  <span
-                    key={idx}
-                    className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-navy-950 border border-navy-700 text-slate-200 flex items-center gap-1.5"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
-                    <span>{emblem}</span>
+            {emblemsList.length > 0 && (
+              <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
+                    <Award className="w-4 h-4 text-gold-400" />
+                    <span>Bảng Ngọc & Bổ Trợ (Emblems)</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-gold-400 uppercase">
+                    {emblemsList.length} Bảng chính
                   </span>
-                ))}
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {emblemsList.map((emblem: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-navy-950 border border-navy-700 text-slate-200 flex items-center gap-1.5"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
+                      <span>{emblem}</span>
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 3. Danh sách Skin hiếm */}
-            <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
-                  <Sparkles className="w-4 h-4 text-gold-400" />
-                  <span>Danh Sách Trang Phục Hiếm</span>
+            {highlightSkinsList.length > 0 && (
+              <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
+                    <Sparkles className="w-4 h-4 text-gold-400" />
+                    <span>Danh Sách Trang Phục Hiếm</span>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono">
+                    {account.skinCount || highlightSkinsList.length} trang phục
+                  </span>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">
-                  {account.skinCount} trang phục
-                </span>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {account.highlightSkins.map((skin, idx) => {
-                  const isLegend = skin.includes("Legend");
-                  const isCollector = skin.includes("Collector");
-                  const isKOF = skin.includes("KOF");
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {highlightSkinsList.map((skin: string, idx: number) => {
+                    const isLegend = skin.includes("Legend");
+                    const isCollector = skin.includes("Collector");
+                    const isKOF = skin.includes("KOF");
 
-                  return (
-                    <div
-                      key={idx}
-                      className={`p-2 rounded-lg border text-xs flex items-center gap-2 ${
-                        isLegend
-                          ? "bg-amber-500/10 border-gold-500/50 text-gold-300 font-bold"
-                          : isCollector
-                          ? "bg-purple-500/10 border-purple-500/40 text-purple-300 font-semibold"
-                          : isKOF
-                          ? "bg-red-500/10 border-red-500/40 text-red-300 font-semibold"
-                          : "bg-navy-950 border-navy-800 text-slate-300"
-                      }`}
-                    >
-                      <Sparkles className="w-3.5 h-3.5 shrink-0 text-gold-400" />
-                      <span className="truncate">{skin}</span>
-                    </div>
-                  );
-                })}
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-2 rounded-lg border text-xs flex items-center gap-2 ${
+                          isLegend
+                            ? "bg-amber-500/10 border-gold-500/50 text-gold-300 font-bold"
+                            : isCollector
+                            ? "bg-purple-500/10 border-purple-500/40 text-purple-300 font-semibold"
+                            : isKOF
+                            ? "bg-red-500/10 border-red-500/40 text-red-300 font-semibold"
+                            : "bg-navy-950 border-navy-800 text-slate-300"
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5 shrink-0 text-gold-400" />
+                        <span className="truncate">{skin}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* 4. Tình trạng bảo mật & Điểm uy tín */}
             <div className="p-3.5 rounded-xl bg-navy-900/60 border border-navy-800 flex items-start gap-3">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
               <div className="text-xs space-y-0.5">
                 <div className="font-bold text-slate-200">
-                  Điểm uy tín: <span className="text-emerald-400 font-mono">{account.reputationScore}/100</span> • {account.securityInfo}
+                  Điểm uy tín:{" "}
+                  <span className="text-emerald-400 font-mono">
+                    {account.reputationScore ?? 100}/100
+                  </span>{" "}
+                  • {account.securityInfo || "100% Trắng Thông Tin"}
                 </div>
                 <div className="text-slate-400 text-[11px]">
-                  Hệ thống tự động chuyển giao tài khoản ngay sau khi thanh toán.
+                  {account.description ||
+                    "Hệ thống tự động chuyển giao tài khoản ngay sau khi thanh toán."}
                 </div>
               </div>
             </div>
@@ -503,7 +616,8 @@ export default function AccountDetailPage() {
 
             <div className="text-center space-y-1.5 pt-1">
               <p className="text-xs text-slate-300">
-                Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline: <strong className="text-gold-400 font-mono">{ADMIN_PHONE}</strong>) để giao dịch trực tiếp & nhận acc ngay.
+                Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline:{" "}
+                <strong className="text-gold-400 font-mono">{ADMIN_PHONE}</strong>) để giao dịch trực tiếp & nhận acc ngay.
               </p>
               <p className="text-[11px] text-slate-400 italic">
                 (Hệ thống tự động sao chép mã đơn ID: #{account.id} vào bộ nhớ tạm)
