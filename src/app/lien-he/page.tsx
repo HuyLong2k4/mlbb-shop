@@ -149,7 +149,7 @@ export default function ContactPage() {
                 </label>
                 <select className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-gold-500 transition-colors">
                   <option>Tư vấn chọn mua Acc</option>
-                  <option>Sự cố nạp thẻ / nạp ví</option>
+                  <option>Hỗ trợ mua tài khoản qua Zalo</option>
                   <option>Yêu cầu bảo hành tài khoản</option>
                   <option>Hợp tác / Thanh lý nick</option>
                 </select>

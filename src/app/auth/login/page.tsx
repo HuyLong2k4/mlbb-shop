@@ -12,7 +12,6 @@ import {
   AlertCircle,
   RefreshCw,
   ArrowLeft,
-  KeyRound,
 } from "lucide-react";
 
 function LoginForm() {
@@ -20,8 +19,8 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -129,17 +128,6 @@ function LoginForm() {
                   placeholder="••••••••"
                   className="w-full pl-10 pr-4 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-gold-500 transition-colors"
                 />
-              </div>
-            </div>
-
-            {/* Hint tài khoản mặc định */}
-            <div className="p-2.5 rounded-lg bg-navy-950/80 border border-navy-800 text-[11px] text-slate-400 space-y-0.5">
-              <div className="text-gold-400 font-bold flex items-center gap-1">
-                <KeyRound className="w-3 h-3" />
-                <span>Tài khoản kiểm tra mặc định:</span>
-              </div>
-              <div>
-                Tên đăng nhập: <code className="text-slate-200 font-mono">admin</code> | Mật khẩu: <code className="text-slate-200 font-mono">admin123</code>
               </div>
             </div>
 

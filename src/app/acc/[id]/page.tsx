@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -9,7 +9,6 @@ import {
   Shield,
   Flame,
   Sparkles,
-  ShoppingCart,
   CheckCircle2,
   XCircle,
   Zap,
@@ -21,13 +20,6 @@ import {
   ArrowLeft,
   Share2,
   MessageCircle,
-  X,
-  Copy,
-  Check,
-  QrCode,
-  ExternalLink,
-  CreditCard,
-  AlertCircle,
 } from "lucide-react";
 import {
   mockAccounts,
@@ -77,14 +69,8 @@ const getRankBadgeInfo = (rank: MLBBAccountRank) => {
   }
 };
 
-// Thông tin tài khoản ngân hàng nhận thanh toán
-const BANK_CONFIG = {
-  bankId: "MB",
-  bankName: "MB Bank (Ngân Hàng Quân Đội)",
-  accountNumber: "0988123456",
-  accountHolder: "MLBB STORE OFFICIAL",
-  adminPhone: "0988123456", // Số Zalo CSKH
-};
+// Số Zalo người bán
+const ADMIN_PHONE = process.env.NEXT_PUBLIC_ADMIN_PHONE || "0988123456";
 
 export default function AccountDetailPage() {
   const params = useParams();
@@ -97,29 +83,6 @@ export default function AccountDetailPage() {
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
-
-  // State điều khiển Modal thanh toán QR
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-
-  // Đóng modal khi nhấn phím Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsPaymentModalOpen(false);
-      }
-    };
-    if (isPaymentModalOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden"; // Khóa cuộn trang khi modal mở
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
-    };
-  }, [isPaymentModalOpen]);
 
   if (!account) {
     return (
@@ -167,41 +130,20 @@ export default function AccountDetailPage() {
     }
   };
 
-  // Hàm sao chép thông tin chuyển khoản (STK, Số tiền, Nội dung CK)
-  const handleCopyText = (text: string, key: string) => {
+  // Tin nhắn soạn sẵn gửi cho người bán qua Zalo
+  const adminMessage = `Chào shop, tôi muốn mua tài khoản MLBB mã ID: #${account.id} - Giá: ${formatVND(account.price)}`;
+
+  // Khi ấn Mua Ngay -> Chuyển thẳng đến Zalo người bán
+  const handleBuyNow = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(text);
-      setCopiedKey(key);
-      setTimeout(() => setCopiedKey(null), 2000);
-    }
-  };
-
-  // Cú pháp nội dung chuyển khoản
-  const transferContent = `MUA ACC ${account.id}`;
-
-  // URL VietQR tạo mã QR chuẩn Napas247 tự động điền STK, Số tiền và Nội dung
-  const qrCodeUrl = `https://img.vietqr.io/image/${BANK_CONFIG.bankId}-${BANK_CONFIG.accountNumber}-compact2.png?amount=${account.price}&addInfo=${encodeURIComponent(
-    transferContent
-  )}&accountName=${encodeURIComponent(BANK_CONFIG.accountHolder)}`;
-
-  // Tin nhắn soạn sẵn gửi cho Admin
-  const adminMessage = `Chào admin, tôi muốn mua tài khoản MLBB mã số ID: ${account.id}`;
-
-  // Xử lý khi bấm nút "Liên hệ Admin"
-  const handleContactAdmin = () => {
-    if (typeof window !== "undefined") {
-      // 1. Tự động sao chép câu tin nhắn vào clipboard
       navigator.clipboard.writeText(adminMessage);
-
-      // 2. Mở Zalo CSKH trong tab mới
-      // Định dạng mở Zalo trực tiếp với số điện thoại admin
-      const zaloUrl = `https://zalo.me/${BANK_CONFIG.adminPhone}`;
+      const zaloUrl = `https://zalo.me/${ADMIN_PHONE}`;
       window.open(zaloUrl, "_blank", "noopener,noreferrer");
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-10 space-y-6 sm:space-y-8">
       {/* Breadcrumb Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
         <div className="flex items-center gap-2">
@@ -222,13 +164,13 @@ export default function AccountDetailPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* 2 CỘT CHÍNH: CỘT TRÁI (CAROUSEL ẢNH) & CỘT PHẢI (CHỈ SỐ & NÚT MUA VÀNG) */}
+      {/* BỐ CỤC CHÍNH: DESKTOP 2 CỘT (ẢNH TRÁI, INFO PHẢI) - MOBILE XẾP CHỒNG (FLEX-COL) */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         {/* ===================================================================== */}
-        {/* CỘT TRÁI: CAROUSEL ẢNH CHỤP IN-GAME PROOF (lg:col-span-7)             */}
+        {/* CỘT 1 (Ở TRÊN TRÊN MOBILE, BÊN TRÁI TRÊN DESKTOP): CAROUSEL ẢNH       */}
         {/* ===================================================================== */}
-        <div className="lg:col-span-7 space-y-4">
+        <div className="w-full lg:col-span-7 space-y-3 sm:space-y-4 order-1">
           {/* Màn hình hiển thị ảnh chính */}
           <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-navy-950 border border-navy-700/80 shadow-navy-card group">
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-navy-950/70 z-10 pointer-events-none" />
@@ -369,9 +311,9 @@ export default function AccountDetailPage() {
         </div>
 
         {/* ===================================================================== */}
-        {/* CỘT PHẢI: CHỈ SỐ CHI TIẾT & NÚT MUA VÀNG (lg:col-span-5)              */}
+        {/* CỘT 2 (Ở DƯỚI TRÊN MOBILE, BÊN PHẢI TRÊN DESKTOP): THÔNG TIN & MUA     */}
         {/* ===================================================================== */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="w-full lg:col-span-5 space-y-5 sm:space-y-6 order-2">
           {/* Header Thông Tin Acc */}
           <div className="space-y-3 pb-4 border-b border-navy-800">
             <div className="flex flex-wrap items-center gap-2">
@@ -537,238 +479,39 @@ export default function AccountDetailPage() {
           </div>
 
           {/* =================================================================== */}
-          {/* NÚT CTA LỚN MÀU VÀNG CÓ CHỮ 'MUA NGAY'                               */}
+          {/* NÚT MUA NGAY - CHUYỂN THẲNG ĐẾN ZALO NGƯỜI BÁN                      */}
           {/* =================================================================== */}
-          <div className="space-y-3 pt-2">
+          <div className="space-y-3 pt-3">
             {isAvailable ? (
               <button
                 type="button"
-                onClick={() => setIsPaymentModalOpen(true)}
-                className="w-full py-4 px-6 rounded-xl text-base sm:text-lg font-black uppercase tracking-wider text-navy-950 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-400 shadow-gold-md hover:shadow-gold-lg transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-center gap-3 cursor-pointer group"
+                onClick={handleBuyNow}
+                className="w-full py-4 px-6 rounded-xl text-base sm:text-lg font-black uppercase tracking-wider text-navy-950 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-400 shadow-gold-md hover:shadow-gold-lg transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-center gap-2.5 cursor-pointer group"
               >
-                <ShoppingCart className="w-6 h-6 text-navy-950 transition-transform group-hover:scale-110" />
-                <span>MUA NGAY</span>
+                <MessageCircle className="w-5 h-5 text-navy-950" />
+                <span>MUA NGAY (CHUYỂN ĐẾN ZALO)</span>
               </button>
             ) : (
               <button
                 disabled
-                className="w-full py-4 px-6 rounded-xl text-base font-bold uppercase tracking-wider bg-navy-800 text-slate-500 border border-navy-700 cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 px-6 rounded-xl text-base font-bold uppercase tracking-wider bg-navy-850 text-slate-500 border border-navy-750 cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <XCircle className="w-5 h-5" />
                 <span>TÀI KHOẢN ĐÃ ĐƯỢC BÁN</span>
               </button>
             )}
 
-            <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-1">
-              <span className="flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-gold-400" />
-                Nhận mật khẩu sau 30s
-              </span>
-              <span>•</span>
-              <button
-                type="button"
-                onClick={handleContactAdmin}
-                className="flex items-center gap-1 hover:text-gold-400 transition-colors cursor-pointer"
-              >
-                <MessageCircle className="w-3.5 h-3.5 text-blue-400" />
-                Chat Zalo hỗ trợ
-              </button>
+            <div className="text-center space-y-1.5 pt-1">
+              <p className="text-xs text-slate-300">
+                Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline: <strong className="text-gold-400 font-mono">{ADMIN_PHONE}</strong>) để giao dịch trực tiếp & nhận acc ngay.
+              </p>
+              <p className="text-[11px] text-slate-400 italic">
+                (Hệ thống tự động sao chép mã đơn ID: #{account.id} vào bộ nhớ tạm)
+              </p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* ========================================================================= */}
-      {/* MODAL THANH TOÁN QR & THÔNG TIN CHUYỂN KHOẢN                            */}
-      {/* ========================================================================= */}
-      {isPaymentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          {/* Backdrop tối mờ click để đóng */}
-          <div
-            onClick={() => setIsPaymentModalOpen(false)}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
-          />
-
-          {/* Modal Container */}
-          <div className="relative w-full max-w-lg bg-navy-900 border border-gold-500/40 rounded-2xl shadow-gold-lg z-10 overflow-hidden animate-in zoom-in-95 duration-200 my-auto">
-            {/* Header Modal */}
-            <div className="p-4 sm:p-5 border-b border-navy-800 bg-navy-950/80 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-gold-500/10 text-gold-400 border border-gold-500/30">
-                  <QrCode className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black uppercase text-slate-100 tracking-wide">
-                    Thanh Toán Mua Tài Khoản
-                  </h3>
-                  <div className="text-xs text-gold-300 font-mono">
-                    Mã đơn hàng: #{account.id}
-                  </div>
-                </div>
-              </div>
-
-              {/* Nút đóng X */}
-              <button
-                type="button"
-                onClick={() => setIsPaymentModalOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-navy-800 transition-colors cursor-pointer"
-                aria-label="Đóng modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Nội dung Modal */}
-            <div className="p-5 sm:p-6 space-y-5 max-h-[80vh] overflow-y-auto">
-              {/* Khung chứa ảnh mã QR VietQR */}
-              <div className="text-center space-y-2">
-                <div className="relative inline-block p-3 rounded-2xl bg-white shadow-md border-2 border-gold-500/50">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={qrCodeUrl}
-                    alt={`VietQR thanh toán cho tài khoản ${account.id}`}
-                    className="w-52 h-52 sm:w-60 sm:h-60 object-contain mx-auto"
-                    loading="eager"
-                  />
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-navy-950 text-gold-400 text-[10px] font-bold border border-gold-500/40 whitespace-nowrap">
-                    Quét bằng mọi ứng dụng Ngân hàng / MoMo
-                  </div>
-                </div>
-                <p className="text-[11px] text-slate-400 pt-1">
-                  Mở App Ngân hàng hoặc Ví điện tử để quét mã thanh toán tự động
-                </p>
-              </div>
-
-              {/* Bảng chi tiết thông tin chuyển khoản */}
-              <div className="p-4 rounded-xl bg-navy-950 border border-navy-800 space-y-2.5 text-xs">
-                {/* 1. Ngân hàng */}
-                <div className="flex items-center justify-between pb-2 border-b border-navy-800/80">
-                  <span className="text-slate-400">Ngân hàng:</span>
-                  <span className="font-bold text-slate-100">
-                    {BANK_CONFIG.bankName}
-                  </span>
-                </div>
-
-                {/* 2. Số tài khoản */}
-                <div className="flex items-center justify-between pb-2 border-b border-navy-800/80">
-                  <span className="text-slate-400">Số tài khoản:</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono font-bold text-gold-400 text-sm">
-                      {BANK_CONFIG.accountNumber}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopyText(BANK_CONFIG.accountNumber, "accountNumber")
-                      }
-                      className="p-1 rounded bg-navy-850 hover:bg-navy-800 text-slate-300 hover:text-gold-400 transition-colors"
-                      title="Sao chép số tài khoản"
-                    >
-                      {copiedKey === "accountNumber" ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* 3. Chủ tài khoản */}
-                <div className="flex items-center justify-between pb-2 border-b border-navy-800/80">
-                  <span className="text-slate-400">Chủ tài khoản:</span>
-                  <span className="font-bold text-slate-200">
-                    {BANK_CONFIG.accountHolder}
-                  </span>
-                </div>
-
-                {/* 4. Số tiền cần chuyển */}
-                <div className="flex items-center justify-between pb-2 border-b border-navy-800/80">
-                  <span className="text-slate-400">Số tiền:</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono font-black text-gold-400 text-sm sm:text-base">
-                      {formatVND(account.price)}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopyText(account.price.toString(), "amount")
-                      }
-                      className="p-1 rounded bg-navy-850 hover:bg-navy-800 text-slate-300 hover:text-gold-400 transition-colors"
-                      title="Sao chép số tiền"
-                    >
-                      {copiedKey === "amount" ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* 5. Nội dung chuyển khoản (BẮT BUỘC) */}
-                <div className="flex items-center justify-between pt-0.5">
-                  <span className="text-slate-400 font-semibold">
-                    Nội dung CK:
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-mono font-black text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 text-xs sm:text-sm">
-                      {transferContent}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopyText(transferContent, "content")
-                      }
-                      className="p-1 rounded bg-navy-850 hover:bg-navy-800 text-slate-300 hover:text-gold-400 transition-colors"
-                      title="Sao chép nội dung chuyển khoản"
-                    >
-                      {copiedKey === "content" ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Lưu ý thanh toán */}
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
-                <span>
-                  <strong>Lưu ý:</strong> Vui lòng giữ nguyên nội dung chuyển khoản{" "}
-                  <code className="text-white font-mono font-bold">
-                    {transferContent}
-                  </code>{" "}
-                  để hệ thống tự động gửi thông tin đăng nhập trong 30 giây.
-                </span>
-              </div>
-
-              {/* =================================================================== */}
-              {/* NÚT LIÊN HỆ ADMIN (CHUYỂN HƯỚNG ZALO VỚI NỘI DUNG TẠO SẴN)          */}
-              {/* =================================================================== */}
-              <div className="space-y-2 pt-1">
-                <button
-                  type="button"
-                  onClick={handleContactAdmin}
-                  className="w-full py-3.5 px-4 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider text-slate-100 bg-navy-800 hover:bg-navy-750 border border-gold-500/50 hover:border-gold-400 transition-all flex items-center justify-center gap-2.5 shadow-md hover:shadow-gold-sm cursor-pointer group"
-                >
-                  <MessageCircle className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
-                  <span>LIÊN HỆ ADMIN</span>
-                  <ExternalLink className="w-4 h-4 text-slate-400" />
-                </button>
-
-                <p className="text-[11px] text-center text-slate-400">
-                  Tin nhắn tự động gửi:{" "}
-                  <span className="italic text-slate-300">
-                    &quot;{adminMessage}&quot;
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

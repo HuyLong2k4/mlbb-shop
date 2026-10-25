@@ -29,8 +29,15 @@ export async function GET(request) {
     if (rank && rank !== "ALL") {
       filter.rank = rank;
     }
-    if (status && status !== "ALL") {
+
+    // Mặc định ẩn các tài khoản đã bán, chỉ hiển thị tài khoản "Còn hàng"
+    // Trừ khi truyền status=ALL (dành cho Admin quản trị xem toàn bộ kho)
+    if (status === "ALL") {
+      // Không lọc theo status
+    } else if (status) {
       filter.status = status;
+    } else {
+      filter.status = "Còn hàng";
     }
 
     // Thực hiện song song đếm tổng số bản ghi và truy vấn trang hiện tại

@@ -3,18 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
-  Crown,
-  Trophy,
-  Shield,
-  Flame,
-  Sparkles,
-  Sword,
-  SlidersHorizontal,
   Search,
-  RotateCcw,
-  ShoppingCart,
-  XCircle,
-  Zap,
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
@@ -26,39 +15,29 @@ const formatVND = (amount: number) => {
   return new Intl.NumberFormat("vi-VN").format(amount) + " ₫";
 };
 
-// Cấu hình màu sắc & Icon đại diện cho từng bậc Rank MLBB
+// Cấu hình style đại diện cho từng bậc Rank MLBB (Tối giản Typography)
 const getRankBadgeInfo = (rank: MLBBAccountRank) => {
   switch (rank) {
     case "Chí Tôn":
       return {
-        icon: Crown,
-        badgeStyle: "bg-gradient-to-r from-red-600 to-amber-600 text-white border-amber-400 shadow-red-500/30",
-        iconColor: "text-amber-300",
+        badgeStyle: "bg-red-500/20 text-red-300 border-red-500/40",
       };
     case "Vinh Quang Thần Thoại":
       return {
-        icon: Trophy,
-        badgeStyle: "bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-navy-950 font-black border-yellow-300 shadow-gold-sm",
-        iconColor: "text-navy-950",
+        badgeStyle: "bg-amber-500/20 text-gold-300 border-gold-500/40 font-bold",
       };
     case "Thần Thoại":
       return {
-        icon: Trophy,
-        badgeStyle: "bg-amber-500/20 text-gold-300 border-gold-500/50",
-        iconColor: "text-gold-400",
+        badgeStyle: "bg-amber-500/10 text-gold-400 border-gold-500/30 font-semibold",
       };
     case "Huyền Thoại":
       return {
-        icon: Flame,
-        badgeStyle: "bg-orange-500/20 text-orange-300 border-orange-500/40",
-        iconColor: "text-orange-400",
+        badgeStyle: "bg-orange-500/15 text-orange-300 border-orange-500/30",
       };
     case "Sử Thi":
     default:
       return {
-        icon: Shield,
-        badgeStyle: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
-        iconColor: "text-cyan-400",
+        badgeStyle: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
       };
   }
 };
@@ -103,6 +82,7 @@ export default function HomePage() {
       const params = new URLSearchParams();
       params.append("page", targetPage.toString());
       params.append("limit", "12"); // 12 tài khoản / trang
+      params.append("status", "Còn hàng"); // Ẩn các acc đã bán, chỉ lấy tài khoản Còn hàng
 
       if (selectedRank && selectedRank !== "ALL") {
         params.append("rank", selectedRank);
@@ -160,6 +140,9 @@ export default function HomePage() {
   // Lọc thêm theo Mức giá và Từ khóa tìm kiếm trên trang hiện tại
   const filteredAccounts = useMemo(() => {
     return accounts.filter((account) => {
+      // Ẩn hoàn toàn các tài khoản đã bán
+      if (account.status && account.status !== "Còn hàng") return false;
+
       // 1. Lọc theo khoảng giá
       if (selectedPriceRange !== "ALL") {
         if (selectedPriceRange === "UNDER_500K" && account.price >= 500000) return false;
@@ -204,8 +187,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden pt-8 pb-12 sm:pt-14 sm:pb-16 bg-gradient-to-b from-navy-900 via-navy-950 to-navy-950 border-b border-navy-800">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[650px] h-[300px] bg-gold-500/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-850 border border-gold-500/40 shadow-gold-sm">
-            <Zap className="w-4 h-4 text-gold-400 animate-pulse" />
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-navy-850 border border-gold-500/30 shadow-sm">
             <span className="text-xs font-bold uppercase tracking-wider text-gold-300">
               Sàn Giao Dịch Acc MLBB Uy Tín #1 Việt Nam
             </span>
@@ -216,18 +198,17 @@ export default function HomePage() {
           </h1>
 
           <p className="max-w-2xl mx-auto text-xs sm:text-sm text-slate-300 font-medium">
-            Phân trang tự động 12 acc / trang. 100% tài khoản trắng thông tin bảo hành trọn đời.
+            100% tài khoản trắng thông tin bảo hành trọn đời.
           </p>
         </div>
       </section>
 
       {/* Main Content Area */}
-      <div id="accounts-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-24">
+      <div id="accounts-section" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 scroll-mt-24">
         {/* THANH BỘ LỌC (FILTER TOOLBAR) */}
         <div className="bg-navy-900/90 border border-navy-700/80 rounded-2xl p-4 sm:p-6 shadow-navy-card backdrop-blur-md space-y-4">
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-gold-400">
-              <SlidersHorizontal className="w-5 h-5" />
+            <div>
               <span className="text-sm font-black uppercase tracking-wider text-slate-100">
                 Bộ Lọc Tìm Kiếm
               </span>
@@ -300,9 +281,8 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleResetFilter}
-                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-300 bg-navy-850 hover:bg-navy-800 border border-navy-700 hover:border-gold-500/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-300 bg-navy-850 hover:bg-navy-800 border border-navy-700 hover:border-gold-500/50 transition-all flex items-center justify-center cursor-pointer"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-gold-400" />
                 <span>Đặt lại bộ lọc</span>
               </button>
             </div>
@@ -351,30 +331,30 @@ export default function HomePage() {
 
         {/* 2. TRẠNG THÁI LOADING (SKELETON CARDS) */}
         {loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((item) => (
               <div
                 key={item}
-                className="bg-navy-900 border border-navy-800 rounded-2xl overflow-hidden p-0 flex flex-col justify-between animate-pulse shadow-navy-card"
+                className="bg-navy-900 border border-navy-800 rounded-xl sm:rounded-2xl overflow-hidden p-0 flex flex-col justify-between animate-pulse shadow-navy-card"
               >
                 <div className="aspect-[16/10] w-full bg-navy-850 relative">
-                  <div className="absolute top-2.5 left-2.5 w-16 h-5 rounded bg-navy-800" />
-                  <div className="absolute top-2.5 right-2.5 w-14 h-5 rounded bg-navy-800" />
+                  <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 w-14 sm:w-16 h-4 sm:h-5 rounded bg-navy-800" />
+                  <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-12 sm:w-14 h-4 sm:h-5 rounded bg-navy-800" />
                   <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-navy-800" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-navy-800" />
                   </div>
                 </div>
 
-                <div className="p-4 space-y-3">
+                <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
                   <div className="h-4 bg-navy-800 rounded w-3/4" />
                   <div className="h-3 bg-navy-850 rounded w-1/2" />
-                  <div className="grid grid-cols-2 gap-2 py-2 px-3 rounded-xl bg-navy-950 border border-navy-850">
+                  <div className="grid grid-cols-2 gap-2 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl bg-navy-950 border border-navy-850">
                     <div className="h-3 bg-navy-800 rounded" />
                     <div className="h-3 bg-navy-800 rounded" />
                   </div>
-                  <div className="pt-3 border-t border-navy-800/80 flex items-center justify-between">
-                    <div className="h-5 bg-navy-800 rounded w-20" />
-                    <div className="h-7 bg-navy-800 rounded w-20" />
+                  <div className="pt-2.5 sm:pt-3 border-t border-navy-800/80 flex items-center justify-between">
+                    <div className="h-4 sm:h-5 bg-navy-800 rounded w-16 sm:w-20" />
+                    <div className="h-6 sm:h-7 bg-navy-800 rounded w-16 sm:w-20" />
                   </div>
                 </div>
               </div>
@@ -382,13 +362,12 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* 3. TRẠNG THÁI HIỂN THỊ DANH SÁCH TÀI KHOẢN */}
+        {/* 3. TRẠNG THÁI HIỂN THỊ DANH SÁCH TÀI KHOẢN (PHONG CÁCH TỐI GIẢN) */}
         {!loading && !error && filteredAccounts.length > 0 && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
               {filteredAccounts.map((account) => {
                 const rankInfo = getRankBadgeInfo(account.rank);
-                const RankIcon = rankInfo.icon;
                 const isAvailable = account.status === "Còn hàng";
                 const displayImg =
                   (account as any).images?.[0] ||
@@ -396,15 +375,16 @@ export default function HomePage() {
                   "";
 
                 return (
-                  <div
+                  <Link
                     key={account.id}
-                    className={`group relative bg-navy-900 border rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-navy-card ${
+                    href={`/acc/${account.id}`}
+                    className={`group relative bg-navy-900 border rounded-xl sm:rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-sm cursor-pointer ${
                       isAvailable
-                        ? "border-navy-700/80 hover:border-gold-500/80 hover:shadow-gold-md hover:-translate-y-1"
-                        : "border-navy-800 opacity-75 grayscale-[40%]"
+                        ? "border-navy-800 hover:border-gold-500/50 hover:shadow-gold-md hover:-translate-y-1"
+                        : "border-navy-850 opacity-60 grayscale-[50%]"
                     }`}
                   >
-                    {/* Banner & Badges */}
+                    {/* Banner & Badges (Tối giản hoàn toàn không icon) */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-navy-950">
                       <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-navy-950/80 z-10 pointer-events-none" />
 
@@ -416,88 +396,87 @@ export default function HomePage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-navy-850 to-navy-950 p-4 group-hover:scale-105 transition-transform duration-500">
-                          <div className="text-center z-10">
-                            <RankIcon className={`w-10 h-10 mx-auto ${rankInfo.iconColor} filter drop-shadow-md`} />
-                            <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mt-1">
-                              {account.rank}
-                            </span>
-                          </div>
+                        <div className="w-full h-full flex items-center justify-center bg-navy-950 p-4">
+                          <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">
+                            {account.rank}
+                          </span>
                         </div>
                       )}
 
-                      {/* ID */}
+                      {/* ID Text Badge */}
                       <div className="absolute top-2.5 left-2.5 z-20">
-                        <span className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-navy-950/90 text-gold-400 border border-gold-500/40 backdrop-blur-sm shadow-sm">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-navy-950/90 text-gold-400 border border-gold-500/30 backdrop-blur-sm">
                           #{account.id}
                         </span>
                       </div>
 
-                      {/* Trạng thái */}
+                      {/* Trạng thái - Chỉ chữ, không icon */}
                       <div className="absolute top-2.5 right-2.5 z-20">
                         {isAvailable ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm backdrop-blur-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                          <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 backdrop-blur-sm">
                             Còn hàng
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide bg-red-600/30 text-red-300 border border-red-500/40 shadow-sm">
-                            <XCircle className="w-3 h-3" />
+                          <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-navy-900 text-slate-400 border border-navy-750">
                             Đã bán
                           </span>
                         )}
                       </div>
 
-                      {/* Huy hiệu Rank */}
+                      {/* Huy hiệu Rank - Chỉ chữ, không icon */}
                       <div className="absolute bottom-2.5 left-2.5 z-20">
-                        <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border shadow-sm ${rankInfo.badgeStyle}`}>
-                          <RankIcon className="w-3 h-3" />
-                          <span>{account.rank}</span>
-                        </div>
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${rankInfo.badgeStyle}`}>
+                          {account.rank}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Body: Tiêu đề & Thông số */}
-                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                    {/* Body: Tiêu đề & Thông số - Typography tối giản, khoảng trắng rộng rãi */}
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3.5">
                       <div>
                         <h3
                           title={account.title}
-                          className="text-xs sm:text-sm font-bold text-slate-100 line-clamp-2 leading-snug group-hover:text-gold-400 transition-colors"
+                          className="text-xs sm:text-sm font-semibold text-slate-100 line-clamp-2 leading-relaxed group-hover:text-gold-400 transition-colors"
                         >
                           {account.title}
                         </h3>
 
-                        <div className="grid grid-cols-2 gap-2 mt-3 py-2 px-3 rounded-xl bg-navy-950/80 border border-navy-800 text-xs">
-                          <div className="flex items-center gap-1.5 text-slate-300">
-                            <Sword className="w-3.5 h-3.5 text-gold-400 shrink-0" />
-                            <span>
-                              Tướng: <strong className="text-slate-100 font-mono">{account.heroCount}</strong>
+                        {/* Bảng thông số: Tướng & Skin (Phân cấp bằng Typography đậm nhạt, không icon) */}
+                        <div className="grid grid-cols-2 gap-3 mt-3.5 py-2.5 px-3 rounded-xl bg-navy-950/70 border border-navy-850">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
+                              Tướng
+                            </span>
+                            <span className="text-sm font-bold text-slate-100 font-mono mt-0.5 block">
+                              {account.heroCount}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-slate-300">
-                            <Sparkles className="w-3.5 h-3.5 text-gold-400 shrink-0" />
-                            <span>
-                              Skin: <strong className="text-gold-400 font-mono">{account.skinCount}</strong>
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-medium block">
+                              Trang phục
+                            </span>
+                            <span className="text-sm font-bold text-gold-400 font-mono mt-0.5 block">
+                              {account.skinCount}
                             </span>
                           </div>
                         </div>
 
-                        {/* Skin nổi bật */}
-                        <div className="mt-2.5 space-y-1">
+                        {/* Skin nổi bật - Không emoji icon, chỉ text tags sạch sẽ */}
+                        <div className="mt-3 space-y-1.5">
                           <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                            Skin nổi bật:
+                            Skin nổi bật
                           </div>
-                          <div className="flex flex-wrap gap-1">
+                          <div className="flex flex-wrap gap-1.5">
                             {account.highlightSkins?.slice(0, 2).map((skin, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] px-1.5 py-0.5 rounded bg-navy-800 border border-navy-700 text-slate-200 truncate max-w-full"
+                                className="text-[10px] px-2 py-0.5 rounded bg-navy-950 border border-navy-800 text-slate-300 font-medium truncate max-w-full"
                               >
-                                ✨ {skin}
+                                {skin}
                               </span>
                             ))}
                             {account.highlightSkins && account.highlightSkins.length > 2 && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-navy-800 text-gold-400 font-mono font-bold">
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-navy-950 text-gold-400 font-mono font-bold border border-navy-800">
                                 +{account.highlightSkins.length - 2}
                               </span>
                             )}
@@ -505,36 +484,33 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* Footer: Giá & Nút Mua */}
-                      <div className="pt-3 border-t border-navy-800/80 flex items-center justify-between gap-2">
+                      {/* Footer: Giá & Nút Mua - Không icon, chỉ chữ đậm rõ ràng */}
+                      <div className="pt-3.5 border-t border-navy-850 flex items-center justify-between gap-3">
                         <div>
-                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">
+                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">
                             Giá bán
                           </div>
-                          <div className="text-base sm:text-lg font-black text-gold-400 font-mono tracking-tight">
+                          <div className="text-base sm:text-lg font-bold text-gold-400 font-mono tracking-tight mt-0.5">
                             {formatVND(account.price)}
                           </div>
                         </div>
 
                         {isAvailable ? (
-                          <Link
-                            href={`/acc/${account.id}`}
-                            className="px-3.5 py-2 text-xs font-black uppercase tracking-wider rounded-lg bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-400 text-navy-950 transition-all flex items-center gap-1 shadow-gold-sm hover:scale-[1.02]"
+                          <span
+                            className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-gradient-to-r from-gold-400 to-amber-500 group-hover:from-gold-300 group-hover:to-amber-400 text-navy-950 transition-all text-center shadow-sm group-hover:scale-[1.02]"
                           >
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            <span>Mua Ngay</span>
-                          </Link>
+                            Chi tiết
+                          </span>
                         ) : (
-                          <button
-                            disabled
-                            className="px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-navy-800 text-slate-500 cursor-not-allowed border border-navy-700"
+                          <span
+                            className="px-3.5 py-2 text-xs font-medium uppercase tracking-wider rounded-lg bg-navy-850 text-slate-400 border border-navy-750"
                           >
                             Hết hàng
-                          </button>
+                          </span>
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

@@ -69,7 +69,7 @@ export default function AdminPage() {
   const loadExistingAccounts = async () => {
     setLoadingList(true);
     try {
-      const res = await fetch("/api/accounts", { cache: "no-store" });
+      const res = await fetch("/api/accounts?status=ALL&limit=100", { cache: "no-store" });
       const data = await res.json();
       if (data.success) {
         setExistingAccounts(data.data || []);
