@@ -1,10 +1,18 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
+
+// Đảm bảo NEXTAUTH_SECRET luôn có giá trị để NextAuth không bị lỗi trên Vercel
+if (!process.env.NEXTAUTH_SECRET) {
+  process.env.NEXTAUTH_SECRET = "mlbb_store_super_secret_jwt_key_2026_xyz";
+}
+
+// Tự động nhận diện URL production nếu triển khai trên Vercel
+if (!process.env.NEXTAUTH_URL && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
 
 export const authOptions = {
-  // Cấu hình các nhà cung cấp xác thực (Providers)
+  // Cấu hình nhà cung cấp xác thực tài khoản Quản trị
   providers: [
-    // 1. Đăng nhập bằng Tài khoản & Mật khẩu tĩnh (Credentials Provider)
     CredentialsProvider({
       name: "Tài khoản Quản trị",
       credentials: {
@@ -19,20 +27,26 @@ export const authOptions = {
         },
       },
       async authorize(credentials) {
-        // Lấy thông tin tài khoản admin từ biến môi trường .env.local
-        const adminUser = process.env.ADMIN_USERNAME || "admin";
-        const adminPass = process.env.ADMIN_PASSWORD || "admin123";
+        const inputUser = (credentials?.username || "").trim();
+        const inputPass = (credentials?.password || "").trim();
 
-        if (!credentials?.username || !credentials?.password) {
-          throw new Error("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
+        if (!inputUser || !inputPass) {
+          return null;
         }
 
-        // Kiểm tra tài khoản và mật khẩu
-        if (
-          credentials.username === adminUser &&
-          credentials.password === adminPass
-        ) {
-          // Trả về đối tượng người dùng nếu đăng nhập đúng
+        const envUser = (process.env.ADMIN_USERNAME || "admin").trim();
+        const envPass = (process.env.ADMIN_PASSWORD || "admin123").trim();
+
+        // Chấp nhận tài khoản admin mặc định HOẶC tài khoản trong biến môi trường
+        const isUserValid =
+          inputUser.toLowerCase() === "admin" ||
+          inputUser.toLowerCase() === envUser.toLowerCase();
+
+        const isPassValid =
+          inputPass === "admin123" ||
+          inputPass === envPass;
+
+        if (isUserValid && isPassValid) {
           return {
             id: "admin-1",
             name: "Admin MLBB STORE",
@@ -41,22 +55,15 @@ export const authOptions = {
           };
         }
 
-        // Trả về null nếu sai thông tin
-        throw new Error("Tên đăng nhập hoặc mật khẩu không chính xác.");
+        return null;
       },
-    }),
-
-    // 2. Đăng nhập bằng Google (Google Provider)
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
 
   // Cấu hình trang đăng nhập tùy biến
   pages: {
-    signIn: "/auth/login", // Chuyển hướng người dùng đến trang login tự tạo
-    error: "/auth/login",  // Chuyển hướng về trang login nếu gặp lỗi
+    signIn: "/auth/login",
+    error: "/auth/login",
   },
 
   // Cấu hình Session bằng JWT (JSON Web Token)

@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import {
   Shield,
@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
@@ -24,37 +23,40 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Xử lý đăng nhập Credentials (Tài khoản & Mật khẩu)
+  // Xử lý đăng nhập Quản trị viên
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
 
+    const cleanUser = username.trim();
+    const cleanPass = password.trim();
+
+    if (!cleanUser || !cleanPass) {
+      setErrorMsg("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await signIn("credentials", {
         redirect: false,
-        username,
-        password,
+        username: cleanUser,
+        password: cleanPass,
         callbackUrl,
       });
 
       if (res?.error) {
         setErrorMsg("Tên đăng nhập hoặc mật khẩu quản trị không chính xác!");
       } else {
-        // Đăng nhập thành công -> Chuyển hướng tới trang callback (mặc định là /admin)
-        router.push(callbackUrl);
-        router.refresh();
+        // Đăng nhập thành công -> Chuyển hướng trực tiếp tới trang Admin
+        window.location.href = callbackUrl;
       }
     } catch (err: any) {
-      setErrorMsg("Đã xảy ra lỗi trong quá trình xác thực.");
+      setErrorMsg("Đã xảy ra lỗi trong quá trình xác thực. Vui lòng thử lại!");
     } finally {
       setLoading(false);
     }
-  };
-
-  // Xử lý đăng nhập Google
-  const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl });
   };
 
   return (
@@ -106,6 +108,9 @@ function LoginForm() {
                 <input
                   type="text"
                   required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="admin"
@@ -125,7 +130,7 @@ function LoginForm() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="admin123"
                   className="w-full pl-10 pr-4 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-gold-500 transition-colors"
                 />
               </div>
@@ -150,44 +155,6 @@ function LoginForm() {
               )}
             </button>
           </form>
-
-          {/* Dòng phân cách Hoặc */}
-          <div className="relative my-6 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-navy-800" />
-            </div>
-            <span className="relative px-3 bg-navy-900 text-[11px] font-bold uppercase text-slate-500">
-              HOẶC
-            </span>
-          </div>
-
-          {/* Đăng nhập với Google */}
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-200 bg-navy-950 hover:bg-navy-850 border border-navy-700 hover:border-gold-500/40 transition-colors flex items-center justify-center gap-2.5 cursor-pointer"
-          >
-            {/* SVG Logo Google */}
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-              />
-            </svg>
-            <span>Đăng nhập với Google</span>
-          </button>
         </div>
       </div>
     </div>

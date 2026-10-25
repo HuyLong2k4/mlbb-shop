@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   PlusCircle,
   CheckCircle2,
@@ -52,10 +53,20 @@ const initialForm: AccountFormData = {
 };
 
 export default function AdminPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [formData, setFormData] = useState<AccountFormData>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Điều hướng về trang đăng nhập nếu chưa xác thực
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login?callbackUrl=/admin");
+    }
+  }, [status, router]);
 
   // State quản lý danh sách URL ảnh Cloudinary đã tải lên
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -242,6 +253,23 @@ export default function AdminPage() {
       setSubmitting(false);
     }
   };
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="flex items-center gap-3 text-gold-400">
+          <RefreshCw className="w-6 h-6 animate-spin" />
+          <span className="text-sm font-bold uppercase tracking-wider text-slate-300">
+            Đang xác thực quyền quản trị...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
