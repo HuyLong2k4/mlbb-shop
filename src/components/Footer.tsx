@@ -1,60 +1,97 @@
 import React from "react";
 import Link from "next/link";
+import {
+  ShieldCheck,
+  Zap,
+  RefreshCw,
+  Headphones,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export default function Footer() {
   return (
     <footer className="bg-navy-950 text-slate-300 border-t border-navy-850 relative">
-      {/* 1. Value Proposition Ribbon - Tối giản hoàn toàn Typography, tăng khoảng trắng */}
-      <div className="border-b border-navy-850/80 bg-navy-900/40 py-8 sm:py-10">
+      {/* 1. Value Proposition Ribbon - 4 cam kết vàng với icon trực quan */}
+      <div className="border-b border-navy-850/80 bg-navy-900/40 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {/* Feature 1 */}
-            <div className="space-y-1">
-              <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider">
-                100% Uy Tín
-              </h4>
-              <p className="text-xs text-slate-400 font-medium">Bảo hành trọn đời mọi tài khoản</p>
+            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-900/70 border border-navy-800/80">
+              <div className="p-2.5 rounded-lg bg-gold-500/10 text-gold-400 shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider truncate">
+                  100% Uy Tín
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
+                  Bảo hành trọn đời mọi nick
+                </p>
+              </div>
             </div>
 
             {/* Feature 2 */}
-            <div className="space-y-1">
-              <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider">
-                Tự Động 24/7
-              </h4>
-              <p className="text-xs text-slate-400 font-medium">Nhận thông tin nick sau 30 giây</p>
+            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-900/70 border border-navy-800/80">
+              <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider truncate">
+                  Tự Động 24/7
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
+                  Giao dịch trong 30 giây
+                </p>
+              </div>
             </div>
 
             {/* Feature 3 */}
-            <div className="space-y-1">
-              <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider">
-                Đổi Trả An Tâm
-              </h4>
-              <p className="text-xs text-slate-400 font-medium">Hoàn 100% tiền nếu sai mô tả</p>
+            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-900/70 border border-navy-800/80">
+              <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 shrink-0">
+                <RefreshCw className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider truncate">
+                  Đổi Trả An Tâm
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
+                  Hoàn 100% nếu sai mô tả
+                </p>
+              </div>
             </div>
 
             {/* Feature 4 */}
-            <div className="space-y-1">
-              <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider">
-                Hỗ Trợ Tận Tình
-              </h4>
-              <p className="text-xs text-slate-400 font-medium">CSKH Zalo & Hotline trực tuyến</p>
+            <div className="flex items-center gap-3 p-3.5 rounded-xl bg-navy-900/70 border border-navy-800/80">
+              <div className="p-2.5 rounded-lg bg-cyan-500/10 text-cyan-400 shrink-0">
+                <Headphones className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 uppercase tracking-wider truncate">
+                  Hỗ Trợ Tận Tình
+                </h4>
+                <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
+                  Zalo & Hotline trực tuyến
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Main Footer Links - Khoảng trắng rộng rãi, chỉ dùng Text */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12">
-          {/* Cột 1: Thông tin thương hiệu (Chiếm 2 cột trên Desktop) */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5">
+      {/* 2. Main Footer Links - 4 Cột Cân Đối Hoàn Hảo (4 + 2 + 3 + 3 = 12 cols) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
+          
+          {/* CỘT 1 (4/12): THƯƠNG HIỆU & GIỚI THIỆU */}
+          <div className="lg:col-span-4 space-y-4">
+            <Link href="/" className="inline-flex items-center gap-2.5 group">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
-                alt="MLBB STORE Logo"
-                className="w-8 h-8 object-contain rounded-lg"
+                alt={`${siteConfig.name} Logo`}
+                className="w-9 h-9 object-contain rounded-lg group-hover:scale-105 transition-transform"
               />
               <div className="flex items-baseline gap-1.5">
                 <span className="text-2xl font-black tracking-tight uppercase text-slate-100">
@@ -66,170 +103,132 @@ export default function Footer() {
               </div>
             </Link>
 
-            {/* Banner nhỏ của shop */}
-            <div className="pt-1">
-              <Link
-                href="/"
-                className="block relative rounded-xl overflow-hidden border border-gold-500/30 hover:border-gold-400/60 shadow-navy-card hover:shadow-gold-sm transition-all duration-300 max-w-xs sm:max-w-sm group"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/footer-banner.png"
-                  alt={`${siteConfig.name} Banner`}
-                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </Link>
-            </div>
-
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-6">
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed pr-0 sm:pr-4">
               {siteConfig.description}
             </p>
 
-            {/* Kênh kết nối mạng xã hội - Text links tối giản */}
-            <div className="pt-2">
-              <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400 block mb-2">
-                Kết nối với chúng tôi
+            {/* Kênh kết nối mạng xã hội - Dạng Pills hiện đại */}
+            <div className="pt-1 space-y-2">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400 block">
+                Cộng đồng & Mạng xã hội
               </span>
-              <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
                 <a
                   href={siteConfig.socials.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-gold-400 transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-850 text-slate-300 hover:text-gold-400 border border-navy-800 hover:border-gold-500/40 transition-colors inline-flex items-center gap-1.5"
                 >
-                  Facebook
+                  <span>Facebook</span>
+                  <ExternalLink className="w-3 h-3 text-slate-500" />
                 </a>
-                <span className="text-slate-700">•</span>
                 <a
                   href={siteConfig.socials.telegram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-gold-400 transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-850 text-slate-300 hover:text-gold-400 border border-navy-800 hover:border-gold-500/40 transition-colors inline-flex items-center gap-1.5"
                 >
-                  Telegram
+                  <span>Telegram</span>
+                  <ExternalLink className="w-3 h-3 text-slate-500" />
                 </a>
-                <span className="text-slate-700">•</span>
                 <a
                   href={siteConfig.contact.zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-gold-400 transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-850 text-gold-400 hover:text-gold-300 border border-gold-500/30 hover:border-gold-500/60 transition-colors inline-flex items-center gap-1.5"
                 >
-                  Zalo CSKH
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>Zalo CSKH</span>
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Cột 2: Danh Mục Acc */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 mb-4 pb-2 border-b border-navy-850">
+          {/* CỘT 2 (2/12): DANH MỤC ACC */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 pb-2 border-b border-navy-850">
               Danh Mục Tài Khoản
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm">
               <li>
                 <Link
                   href="/acc-vip"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
+                  className="text-slate-400 hover:text-gold-400 transition-colors block"
                 >
-                  Acc VIP
+                  Acc VIP (≥ 1 Triệu)
                 </Link>
               </li>
               <li>
                 <Link
                   href="/acc-sinh-vien"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
+                  className="text-slate-400 hover:text-emerald-400 transition-colors block"
                 >
-                  Acc Sinh Viên
+                  Acc Sinh Viên (&lt; 1 Triệu)
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/dich-vu-cay-thue"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
+                  href="/"
+                  className="text-slate-400 hover:text-gold-400 transition-colors block"
                 >
-                  Dịch Vụ Cày Thuê Rank
+                  Điểm Sưu Tập Thiên Hà
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/"
+                  className="text-slate-400 hover:text-gold-400 transition-colors block"
+                >
+                  Kho Nick Thần Thoại
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/lien-he"
+                  className="text-slate-400 hover:text-gold-400 transition-colors block"
+                >
+                  Trung Tâm Hỗ Trợ
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Cột 3: Hỗ Trợ & Chính Sách
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 mb-4 pb-2 border-b border-navy-850">
-              Hỗ Trợ & Quy Định
+          {/* CỘT 3 (3/12): LIÊN HỆ CSKH */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 pb-2 border-b border-navy-850">
+              Liên Hệ Trực Tiếp
             </h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm">
-              <li>
-                <Link
-                  href="/huong-dan-mua-hang"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Hướng dẫn mua nick
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/chinh-sach-bao-hanh"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Chính sách bảo hành & hoàn tiền
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dieu-khoan-su-dung"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Điều khoản dịch vụ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/kiem-tra-don-hang"
-                  className="text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  Kiểm tra đơn hàng đã mua
-                </Link>
-              </li>
-            </ul>
-          </div> */}
-
-          {/* Cột 4: Liên Hệ Trực Tiếp (Typography phân cấp rõ ràng) */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 mb-4 pb-2 border-b border-navy-850">
-              Liên Hệ CSKH
-            </h3>
-            <div className="space-y-3.5 text-xs sm:text-sm">
+            <div className="space-y-3 text-xs sm:text-sm">
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
-                  Hotline 24/7
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
+                  Hotline CSKH (24/7)
                 </span>
                 <a
                   href={`tel:${siteConfig.contact.phone}`}
-                  className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono"
+                  className="font-mono font-bold text-slate-100 hover:text-gold-400 transition-colors text-sm"
                 >
                   {siteConfig.contact.hotline}
                 </a>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
-                  Zalo Hỗ Trợ
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
+                  Zalo Hỗ Trợ Trực Tuyến
                 </span>
                 <a
                   href={siteConfig.contact.zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-slate-100 hover:text-gold-400 transition-colors font-mono"
+                  className="font-mono font-bold text-slate-100 hover:text-gold-400 transition-colors text-sm flex items-center gap-1.5"
                 >
-                  {siteConfig.contact.zaloDisplay} ({siteConfig.contact.zaloName})
+                  <span>{siteConfig.contact.zaloDisplay}</span>
+                  <span className="text-xs font-normal text-slate-400">({siteConfig.contact.zaloName})</span>
                 </a>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
-                  Email CSKH
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
+                  Hòm Thư Email
                 </span>
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
@@ -240,25 +239,67 @@ export default function Footer() {
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
                   Thời Gian Làm Việc
                 </span>
-                <span className="text-slate-300">{siteConfig.contact.workingHours}</span>
+                <span className="text-slate-300 text-xs">{siteConfig.contact.workingHours}</span>
               </div>
             </div>
           </div>
+
+          {/* CỘT 4 (3/12): THẺ BANNER SHOP CHÍNH THỨC */}
+          <div className="lg:col-span-3 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gold-400 pb-2 border-b border-navy-850">
+              Thương Hiệu Shop
+            </h3>
+
+            {/* Banner nhỏ eSports với hiệu ứng sang trọng */}
+            <div className="relative rounded-2xl overflow-hidden border border-gold-500/40 bg-navy-900 shadow-gold-sm hover:border-gold-400 transition-all duration-300 group">
+              <Link href="/" className="block relative aspect-video w-full overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/footer-banner.png"
+                  alt={`${siteConfig.name} Official Banner`}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </Link>
+
+              <div className="p-3 bg-gradient-to-b from-navy-900 to-navy-950 border-t border-navy-800 text-center space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-navy-850 border border-gold-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gold-300">
+                    Sàn Uy Tín #1 VN
+                  </span>
+                </div>
+                <a
+                  href={siteConfig.contact.zaloUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2 px-3 rounded-xl text-xs font-bold uppercase tracking-wider text-navy-950 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-400 transition-all flex items-center justify-center gap-1.5 shadow-sm block text-center"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>Chat Zalo Ngay</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* Bản quyền Footer */}
-      <div className="bg-navy-950 border-t border-navy-850/80 py-4 text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      {/* 3. Bản quyền Footer */}
+      <div className="bg-navy-950 border-t border-navy-850/80 py-5 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <p>
-            © 2026 <span className="text-gold-400 font-semibold">MLBB STORE</span>. Tất cả quyền được bảo lưu.
+            © 2026 <span className="text-gold-400 font-bold">{siteConfig.name}</span>. Bản quyền thuộc về {siteConfig.name}.
           </p>
-          <p className="text-[11px] text-slate-400">
-            Hệ thống giao dịch tài khoản Mobile Legends: Bang Bang tự động 24/7.
-          </p>
+          <div className="flex items-center justify-center gap-3 text-[11px] text-slate-500">
+            <span>Bảo mật 100%</span>
+            <span>•</span>
+            <span>Giao dịch an toàn</span>
+            <span>•</span>
+            <span>Hỗ trợ 24/7</span>
+          </div>
         </div>
       </div>
     </footer>
