@@ -9,7 +9,8 @@ export type MLBBCollectionTier =
   | "Sưu tập truyền kỳ"
   | "Sưu tập siêu cấp"
   | "Nhà đại sưu tập"
-  | "Sưu tập thiên hà";
+  | "Sưu tập thiên hà"
+  | "Khác";
 
 export type AccountStatus = "Còn hàng" | "Đã bán";
 

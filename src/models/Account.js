@@ -109,6 +109,7 @@ const AccountSchema = new mongoose.Schema(
           "Sưu tập siêu cấp",
           "Nhà đại sưu tập",
           "Sưu tập thiên hà",
+          "Khác",
         ],
         message: "{VALUE} không phải là bậc Điểm sưu tập hợp lệ",
       },

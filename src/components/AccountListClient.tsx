@@ -40,10 +40,15 @@ const getTierBadgeInfo = (tier?: string, fallbackRank?: string) => {
         badgeStyle: "bg-red-500/20 text-red-300 border-red-500/40 font-semibold",
       };
     case "Sưu tập truyền kỳ":
-    default:
       return {
         label: "Sưu tập truyền kỳ",
         badgeStyle: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+      };
+    case "Khác":
+    default:
+      return {
+        label: currentTier || "Khác",
+        badgeStyle: "bg-slate-500/20 text-slate-300 border-slate-500/30 font-medium",
       };
   }
 };
@@ -193,6 +198,7 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
               <option value="Nhà đại sưu tập">Nhà đại sưu tập</option>
               <option value="Sưu tập siêu cấp">Sưu tập siêu cấp</option>
               <option value="Sưu tập truyền kỳ">Sưu tập truyền kỳ</option>
+              <option value="Khác">Khác</option>
             </select>
           </div>
 

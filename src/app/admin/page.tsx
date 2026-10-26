@@ -533,6 +533,7 @@ export default function AdminPage() {
                 <option value="Nhà đại sưu tập">Nhà đại sưu tập</option>
                 <option value="Sưu tập siêu cấp">Sưu tập siêu cấp</option>
                 <option value="Sưu tập truyền kỳ">Sưu tập truyền kỳ</option>
+                <option value="Khác">Khác (Điểm sưu tập khác)</option>
               </select>
             </div>
 
