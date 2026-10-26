@@ -366,7 +366,7 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
                   <div>
                     <h3
                       title={account.title}
-                      className="text-xs sm:text-sm font-semibold text-slate-100 line-clamp-2 leading-relaxed group-hover:text-gold-400 transition-colors"
+                      className="text-base sm:text-lg font-bold text-slate-100 line-clamp-2 leading-snug group-hover:text-gold-400 transition-colors"
                     >
                       {account.title}
                     </h3>

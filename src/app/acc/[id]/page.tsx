@@ -371,11 +371,11 @@ export default function AccountDetailPage() {
           <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div className="flex items-center gap-2 text-slate-300">
               <ShieldCheck className="w-4 h-4 text-gold-400 shrink-0" />
-              <span>Phục vụ chu đáo</span>
+              <span>Hướng dẫn từ A-Z</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 col-span-2 sm:col-span-1">
               <Zap className="w-4 h-4 text-gold-400 shrink-0" />
-              <span>Giao nick 30 giây</span>
+              <span>Phục vụ nhiệt tình</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 col-span-2 sm:col-span-1">
               <Zap className="w-4 h-4 text-gold-400 shrink-0" />
@@ -412,7 +412,7 @@ export default function AccountDetailPage() {
               )}
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-100 leading-tight">
+            <h1 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-slate-100 leading-tight">
               {account.title}
             </h1>
 

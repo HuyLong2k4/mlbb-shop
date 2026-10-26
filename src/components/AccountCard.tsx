@@ -82,7 +82,7 @@ export default function AccountCard({ account }: { account: AccountProps }) {
       {/* Content - Typography phân cấp rõ ràng */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100 line-clamp-1 group-hover:text-gold-400 transition-colors">
+          <h3 className="text-base sm:text-lg font-bold text-slate-100 line-clamp-2 leading-snug group-hover:text-gold-400 transition-colors">
             {account.title}
           </h3>
 
