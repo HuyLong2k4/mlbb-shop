@@ -20,6 +20,7 @@ import {
   Sparkles,
   ToggleLeft,
   ToggleRight,
+  Edit,
 } from "lucide-react";
 
 interface AccountFormData {
@@ -904,14 +905,24 @@ export default function AdminPage() {
                         </button>
                       </td>
                       <td className="py-3 px-3 text-right">
-                        <Link
-                          href={`/acc/${acc.id}`}
-                          target="_blank"
-                          className="inline-flex items-center gap-1 text-[11px] text-gold-400 hover:text-gold-300 underline font-semibold"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Xem</span>
-                        </Link>
+                        <div className="flex items-center justify-end gap-2.5">
+                          <Link
+                            href={`/admin/edit/${acc.id}`}
+                            className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 font-semibold hover:underline"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Sửa</span>
+                          </Link>
+                          <span className="text-slate-600">|</span>
+                          <Link
+                            href={`/acc/${acc.id}`}
+                            target="_blank"
+                            className="inline-flex items-center gap-1 text-[11px] text-gold-400 hover:text-gold-300 font-semibold hover:underline"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>Xem</span>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   );

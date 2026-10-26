@@ -108,3 +108,49 @@ export async function POST(request) {
     );
   }
 }
+
+/**
+ * DELETE /api/upload
+ * Nhận danh sách URL hoặc publicId để xóa ảnh cũ trên Cloudinary
+ */
+export async function DELETE(request) {
+  try {
+    const body = await request.json();
+    const { url, publicId, urls, publicIds } = body;
+
+    const targets = [];
+    if (url) targets.push(url);
+    if (publicId) targets.push(publicId);
+    if (Array.isArray(urls)) targets.push(...urls);
+    if (Array.isArray(publicIds)) targets.push(...publicIds);
+
+    if (targets.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Không tìm thấy URL hoặc publicId ảnh cần xóa." },
+        { status: 400 }
+      );
+    }
+
+    const { deleteFromCloudinary } = await import("@/lib/cloudinary");
+
+    const deleteResults = await Promise.allSettled(
+      targets.map((t) => deleteFromCloudinary(t))
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: `Đã xử lý xóa ${targets.length} ảnh trên Cloudinary.`,
+      results: deleteResults,
+    });
+  } catch (error) {
+    console.error("Lỗi API DELETE /api/upload:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Không thể xóa ảnh trên Cloudinary.",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
