@@ -354,6 +354,9 @@ export default function AdminPage() {
 
       // Cập nhật lại danh sách đối soát
       loadExistingAccounts();
+
+      // Làm mới Router Cache phía client
+      router.refresh();
     } catch (err: any) {
       setErrorMsg(err.message || "Đã xảy ra lỗi khi lưu vào cơ sở dữ liệu.");
     } finally {

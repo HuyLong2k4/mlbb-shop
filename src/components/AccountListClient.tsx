@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, RefreshCw } from "lucide-react";
 import { MLBBMockAccount } from "@/data/mockAccounts";
 import Pagination from "@/components/Pagination";
 
@@ -58,12 +59,21 @@ interface AccountListClientProps {
 }
 
 export default function AccountListClient({ initialAccounts }: AccountListClientProps) {
+  const router = useRouter();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   // State quản lý bộ lọc
   const [selectedTier, setSelectedTier] = useState<string>("ALL");
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("ALL");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 12;
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    router.refresh();
+    setTimeout(() => setIsRefreshing(false), 800);
+  };
 
   // Lọc danh sách theo Điểm sưu tập, Mức giá và Từ khóa
   const filteredAccounts = useMemo(() => {
@@ -246,6 +256,15 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
               </span>
             )}
           </div>
+
+          <button
+            onClick={handleRefresh}
+            className="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Làm mới dữ liệu từ máy chủ"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+            <span>Làm mới</span>
+          </button>
         </div>
       </div>
 

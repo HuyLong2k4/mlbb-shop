@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
 
@@ -118,6 +119,16 @@ export async function POST(request) {
     }
 
     const newAccount = await Account.create(body);
+
+    // Tự động làm mới cache trang chủ và các danh mục ngay lập tức (On-Demand ISR Revalidation)
+    try {
+      revalidatePath("/");
+      revalidatePath("/acc-vip");
+      revalidatePath("/acc-sinh-vien");
+      revalidateTag("accounts");
+    } catch (revalErr) {
+      console.warn("Revalidate cache warning:", revalErr);
+    }
 
     return NextResponse.json(
       {

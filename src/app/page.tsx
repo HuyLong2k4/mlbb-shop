@@ -21,8 +21,8 @@ async function getAccounts(): Promise<MLBBMockAccount[]> {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
   try {
-    const res = await fetch(`${baseUrl}/api/accounts?status=Còn hàng&limit=100`, {
-      next: { revalidate: 60 },
+    const res = await fetch(`${baseUrl}/api/accounts?status=Còn%20hàng&limit=100`, {
+      next: { revalidate: 60, tags: ["accounts"] },
     });
 
     if (!res.ok) {
