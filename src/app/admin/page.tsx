@@ -31,8 +31,6 @@ interface AccountFormData {
   skinCount: number | "";
   highlightSkins: string; // Phân cách bằng dấu phẩy
   status: string;
-  winRateOverall: string;
-  winRateMatches: number | "";
   emblems: string; // Phân cách bằng dấu phẩy
   description: string;
 }
@@ -48,8 +46,6 @@ const initialForm: AccountFormData = {
   skinCount: 100,
   highlightSkins: "Gusion - Cosmic Gleam (Legend), Chou - Iori Yagami (KOF)",
   status: "Còn hàng",
-  winRateOverall: "65.5%",
-  winRateMatches: 1500,
   emblems: "Sát Thủ Lv.60, Đấu Sĩ Lv.60, Xạ Thủ Lv.55",
   description: "Tài khoản chính chủ trắng thông tin, bảo hành đổi trả vĩnh viễn.",
 };
@@ -330,11 +326,6 @@ export default function AdminPage() {
       skinCount: Number(formData.skinCount) || 0,
       highlightSkins: skinsArray,
       status: formData.status,
-      winRate: {
-        overall: formData.winRateOverall || "60.0%",
-        totalMatches: Number(formData.winRateMatches) || 0,
-        rankWinRate: formData.winRateOverall || "60.0%",
-      },
       emblems: emblemsArray,
       description: formData.description,
       reputationScore: 100,
@@ -686,8 +677,8 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* Hàng 3: Số Tướng, Số Skin, Winrate, Số trận */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Hàng 3: Số Tướng, Số Skin */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
                 Số lượng tướng
@@ -711,34 +702,6 @@ export default function AdminPage() {
                 name="skinCount"
                 min={0}
                 value={formData.skinCount}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm font-mono text-slate-200 focus:outline-none focus:border-gold-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
-                Tỉ lệ thắng (Winrate)
-              </label>
-              <input
-                type="text"
-                name="winRateOverall"
-                placeholder="VD: 72.5%"
-                value={formData.winRateOverall}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-gold-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
-                Tổng số trận đấu
-              </label>
-              <input
-                type="number"
-                name="winRateMatches"
-                min={0}
-                value={formData.winRateMatches}
                 onChange={handleChange}
                 className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm font-mono text-slate-200 focus:outline-none focus:border-gold-500"
               />

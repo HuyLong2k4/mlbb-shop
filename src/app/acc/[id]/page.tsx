@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  TrendingUp,
   Award,
   ArrowLeft,
   Share2,
@@ -205,12 +204,6 @@ export default function AccountDetailPage() {
     title: "Ảnh chụp màn hình game",
     caption: "Chi tiết tài khoản in-game",
     imageUrl: "",
-  };
-
-  const winRateData = account.winRate || {
-    overall: "60.0%",
-    totalMatches: 1000,
-    rankWinRate: "60.0%",
   };
 
   const highlightSkinsList: string[] = Array.isArray(account.highlightSkins)
@@ -510,45 +503,10 @@ export default function AccountDetailPage() {
           </div>
 
           {/* =================================================================== */}
-          {/* CÁC CHỈ SỐ CHI TIẾT (TỈ LỆ THẮNG, BẢNG NGỌC, SKIN HIẾM)             */}
+          {/* CÁC CHỈ SỐ CHI TIẾT (BẢNG NGỌC, SKIN HIẾM)                        */}
           {/* =================================================================== */}
           <div className="space-y-4">
-            {/* 1. Tỉ lệ thắng (Winrate) */}
-            <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
-                  <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  <span>Tỉ Lệ Thắng (Winrate)</span>
-                </div>
-                <span className="text-base font-black text-emerald-400 font-mono">
-                  {winRateData.overall}
-                </span>
-              </div>
-
-              <div className="w-full bg-navy-950 rounded-full h-2.5 overflow-hidden border border-navy-800">
-                <div
-                  className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-1000"
-                  style={{ width: `${parseFloat(winRateData.overall) || 60}%` }}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-navy-800/80">
-                <div className="text-slate-400">
-                  Tổng số trận:{" "}
-                  <strong className="text-slate-200 font-mono">
-                    {Number(winRateData.totalMatches || 0).toLocaleString("vi-VN")} trận
-                  </strong>
-                </div>
-                <div className="text-slate-400 text-right">
-                  Winrate Rank:{" "}
-                  <strong className="text-gold-400 font-mono">
-                    {winRateData.rankWinRate || winRateData.overall}
-                  </strong>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Bảng ngọc (Emblems) */}
+            {/* Bảng ngọc (Emblems) */}
             {emblemsList.length > 0 && (
               <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
                 <div className="flex items-center justify-between">

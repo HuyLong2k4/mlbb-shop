@@ -30,7 +30,7 @@ export interface MLBBMockAccount {
   skinCount: number;
   highlightSkins: string[];
   status: AccountStatus;
-  winRate: AccountWinRate;
+  winRate?: AccountWinRate;
   emblems: string[]; // Danh sách Bảng ngọc
   reputationScore: number; // Điểm uy tín (Max 100)
   securityInfo: string; // Trạng thái bảo mật
