@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
+import { revalidatePath, revalidateTag } from "next/cache";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
 import { mockAccounts } from "@/data/mockAccounts";
@@ -126,6 +127,89 @@ export async function GET(request, { params }) {
       {
         success: false,
         message: "Lỗi máy chủ khi lấy chi tiết tài khoản",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PATCH /api/accounts/[id]
+ * Cập nhật một phần tài khoản (ví dụ: thay đổi trạng thái Còn hàng / Đã bán)
+ */
+export async function PATCH(request, { params }) {
+  try {
+    await dbConnect();
+
+    const { id } = params;
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Mã tài khoản không hợp lệ" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+
+    // Chỉ cho phép cập nhật các trường an toàn
+    const allowedFields = ["status", "price", "originalPrice", "collectionTier", "description"];
+    const updatePayload = {};
+    for (const key of allowedFields) {
+      if (body[key] !== undefined) {
+        updatePayload[key] = body[key];
+      }
+    }
+
+    if (Object.keys(updatePayload).length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Không có dữ liệu hợp lệ để cập nhật" },
+        { status: 400 }
+      );
+    }
+
+    const normalizedId = decodeURIComponent(String(id).trim());
+
+    const updatedAccount = await Account.findOneAndUpdate(
+      {
+        $or: [
+          { id: normalizedId },
+          { id: normalizedId.toUpperCase() },
+          { id: normalizedId.toLowerCase() },
+        ],
+      },
+      { $set: updatePayload },
+      { new: true, runValidators: false }
+    ).lean();
+
+    if (!updatedAccount) {
+      return NextResponse.json(
+        { success: false, message: `Không tìm thấy tài khoản #${normalizedId}` },
+        { status: 404 }
+      );
+    }
+
+    // Xóa cache trang chủ ngay sau khi cập nhật trạng thái
+    try {
+      revalidatePath("/");
+      revalidatePath("/acc-vip");
+      revalidatePath("/acc-sinh-vien");
+      revalidateTag("accounts");
+    } catch (revalErr) {
+      console.warn("Revalidate warning:", revalErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Cập nhật tài khoản #${updatedAccount.id} thành công!`,
+      data: updatedAccount,
+    });
+  } catch (error) {
+    console.error("Lỗi PATCH /api/accounts/[id]:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Lỗi máy chủ khi cập nhật tài khoản",
         error: error.message,
       },
       { status: 500 }

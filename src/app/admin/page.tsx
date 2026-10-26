@@ -18,6 +18,8 @@ import {
   ImageIcon,
   X,
   Sparkles,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 
 interface AccountFormData {
@@ -75,6 +77,9 @@ export default function AdminPage() {
   const [existingAccounts, setExistingAccounts] = useState<any[]>([]);
   const [loadingList, setLoadingList] = useState(true);
 
+  // State cho việc cập nhật trạng thái nhanh
+  const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
+
   // Tải danh sách tài khoản hiện có
   const loadExistingAccounts = async () => {
     setLoadingList(true);
@@ -94,6 +99,32 @@ export default function AdminPage() {
   useEffect(() => {
     loadExistingAccounts();
   }, []);
+
+  // Hàm cập nhật trạng thái tài khoản (Còn hàng <-> Đã bán)
+  const handleToggleStatus = async (accId: string, currentStatus: string) => {
+    const newStatus = currentStatus === "Còn hàng" ? "Đã bán" : "Còn hàng";
+    setUpdatingStatusId(accId);
+    try {
+      const res = await fetch(`/api/accounts/${encodeURIComponent(accId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Không thể cập nhật trạng thái");
+      }
+      // Cập nhật ngay trong state không cần reload toàn bộ
+      setExistingAccounts((prev) =>
+        prev.map((a) => (a.id === accId ? { ...a, status: newStatus } : a))
+      );
+      router.refresh();
+    } catch (err: any) {
+      alert(`Lỗi: ${err.message}`);
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
 
   // Xử lý thay đổi input văn bản/số
   const handleChange = (
@@ -852,15 +883,25 @@ export default function AdminPage() {
                         {acc.heroCount} / {acc.skinCount}
                       </td>
                       <td className="py-3 px-3">
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                        <button
+                          onClick={() => handleToggleStatus(acc.id, acc.status)}
+                          disabled={updatingStatusId === acc.id}
+                          title={acc.status === "Còn hàng" ? "Nhấn để đánh dấu Đã bán" : "Nhấn để mở lại Còn hàng"}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer disabled:opacity-50 ${
                             acc.status === "Còn hàng"
-                              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                              : "bg-red-500/20 text-red-300 border border-red-500/40"
+                              ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-red-500/20 hover:text-red-300 hover:border-red-500/40"
+                              : "bg-red-500/20 text-red-300 border-red-500/40 hover:bg-emerald-500/20 hover:text-emerald-300 hover:border-emerald-500/40"
                           }`}
                         >
-                          {acc.status}
-                        </span>
+                          {updatingStatusId === acc.id ? (
+                            <RefreshCw className="w-3 h-3 animate-spin" />
+                          ) : acc.status === "Còn hàng" ? (
+                            <ToggleRight className="w-3.5 h-3.5" />
+                          ) : (
+                            <ToggleLeft className="w-3.5 h-3.5" />
+                          )}
+                          <span>{updatingStatusId === acc.id ? "Đang lưu..." : acc.status}</span>
+                        </button>
                       </td>
                       <td className="py-3 px-3 text-right">
                         <Link
@@ -869,7 +910,7 @@ export default function AdminPage() {
                           className="inline-flex items-center gap-1 text-[11px] text-gold-400 hover:text-gold-300 underline font-semibold"
                         >
                           <Eye className="w-3.5 h-3.5" />
-                          <span>Xem chi tiết</span>
+                          <span>Xem</span>
                         </Link>
                       </td>
                     </tr>

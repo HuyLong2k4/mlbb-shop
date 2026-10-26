@@ -25,10 +25,6 @@ const navItems: NavItem[] = [
     name: "Acc Sinh viên",
     href: "/acc-sinh-vien",
   },
-  {
-    name: "Liên hệ",
-    href: "/lien-he",
-  },
 ];
 
 export default function Navbar() {

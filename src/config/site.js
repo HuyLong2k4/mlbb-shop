@@ -20,7 +20,7 @@ export const siteConfig = {
   // Thông tin liên hệ chính (Single Source of Truth)
   contact: {
     phone: cleanPhone || "0988123456",
-    hotline: "0988.123.456",
+    hotline: "0947150008",
     hotlineDisplay: "0988.123.456",
     hotlineEmergency: "1900.8888",
     zalo: cleanPhone || "0988123456",

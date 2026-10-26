@@ -166,14 +166,14 @@ export default function Footer() {
                   Acc Sinh Viên (&lt; 1 Triệu)
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/lien-he"
                   className="text-slate-400 hover:text-gold-400 transition-colors block"
                 >
                   Trung Tâm Hỗ Trợ
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
