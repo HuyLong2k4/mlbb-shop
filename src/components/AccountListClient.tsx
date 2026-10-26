@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, RefreshCw } from "lucide-react";
-import { MLBBMockAccount } from "@/data/mockAccounts";
+import { AccountData } from "@/types/account";
 import Pagination from "@/components/Pagination";
 
 // Format tiền tệ VNĐ
@@ -47,7 +47,7 @@ const getTierBadgeInfo = (tier?: string) => {
 };
 
 interface AccountListClientProps {
-  initialAccounts: MLBBMockAccount[];
+  initialAccounts: AccountData[];
 }
 
 export default function AccountListClient({ initialAccounts }: AccountListClientProps) {

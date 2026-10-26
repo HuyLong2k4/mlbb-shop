@@ -2,7 +2,7 @@ import React from "react";
 import AccountListClient from "@/components/AccountListClient";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
-import { MLBBMockAccount } from "@/data/mockAccounts";
+import { AccountData } from "@/types/account";
 
 // ==============================================================================
 // CẤU HÌNH INCREMENTAL STATIC REGENERATION (ISR) CHO TRANG CHỦ
@@ -15,7 +15,7 @@ export const revalidate = 60;
  * Áp dụng Next.js Data Cache với { next: { revalidate: 60 } } để lưu cache
  * dữ liệu trên server trong 60 giây, giảm thiểu tối đa truy vấn tới Database.
  */
-async function getAccounts(): Promise<MLBBMockAccount[]> {
+async function getAccounts(): Promise<AccountData[]> {
   const baseUrl =
     process.env.NEXTAUTH_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");

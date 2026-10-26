@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 import { revalidatePath, revalidateTag } from "next/cache";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
-import { mockAccounts } from "@/data/mockAccounts";
 
 /**
  * GET /api/accounts/[id]
- * Lấy chi tiết tài khoản theo mã ID từ MongoDB (hoặc mock data fallback)
+ * Lấy chi tiết tài khoản theo mã ID từ MongoDB
  */
 export async function GET(request, { params }) {
   try {
@@ -58,17 +57,7 @@ export async function GET(request, { params }) {
       console.warn("Lỗi truy vấn MongoDB Account.findOne:", queryErr.message);
     }
 
-    // 3. Nếu không có trong MongoDB, tìm trong mockAccounts làm fallback
-    if (!account) {
-      const mockAcc = mockAccounts.find(
-        (acc) => acc.id.toLowerCase() === normalizedId.toLowerCase()
-      );
-      if (mockAcc) {
-        account = { ...mockAcc };
-      }
-    }
-
-    // 4. Nếu vẫn không tìm thấy
+    // 3. Nếu không tìm thấy tài khoản trong MongoDB
     if (!account) {
       return NextResponse.json(
         {

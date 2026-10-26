@@ -20,10 +20,7 @@ import {
   Maximize2,
   X,
 } from "lucide-react";
-import {
-  mockAccounts,
-  MLBBMockAccount,
-} from "@/data/mockAccounts";
+import { AccountData } from "@/types/account";
 import { siteConfig } from "@/config/site";
 
 // Format tiền tệ VNĐ
@@ -35,7 +32,7 @@ export default function AccountDetailPage() {
   const params = useParams();
   const accountId = params?.id as string;
 
-  const [account, setAccount] = useState<any>(null);
+  const [account, setAccount] = useState<AccountData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -70,31 +67,18 @@ export default function AccountDetailPage() {
 
         if (res.ok && data.success && data.data && isMounted) {
           setAccount(data.data);
-          setLoading(false);
-          return;
+        } else if (isMounted) {
+          setAccount(null);
         }
       } catch (err) {
-        console.warn("Lỗi khi tải từ API MongoDB, dùng mock fallback:", err);
-      }
-
-      // Fallback tìm trong mock data nếu chưa có API hoặc kết nối DB chậm
-      const cleanCompareId = (() => {
-        try {
-          return decodeURIComponent(accountId).toLowerCase();
-        } catch {
-          return accountId.toLowerCase();
+        console.error("Lỗi khi tải từ API MongoDB:", err);
+        if (isMounted) {
+          setAccount(null);
         }
-      })();
-
-      const mockAcc = mockAccounts.find(
-        (acc) => acc.id.toLowerCase() === cleanCompareId
-      );
-      if (mockAcc && isMounted) {
-        setAccount(mockAcc);
-      }
-
-      if (isMounted) {
-        setLoading(false);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -256,7 +240,7 @@ export default function AccountDetailPage() {
                   src={currentScreenshot.imageUrl}
                   alt={currentScreenshot.title}
                   className="w-full h-full object-contain cursor-zoom-in"
-                  onClick={() => setZoomImage(currentScreenshot.imageUrl)}
+                  onClick={() => setZoomImage(currentScreenshot.imageUrl || null)}
                 />
                 <div className="absolute top-2.5 left-2.5 z-20">
                   <span className="px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-black/85 text-gold-400 border border-gold-500/40 backdrop-blur-sm">
@@ -267,7 +251,7 @@ export default function AccountDetailPage() {
                 {/* Nút Xem ảnh phóng to (Zoom) */}
                 <button
                   type="button"
-                  onClick={() => setZoomImage(currentScreenshot.imageUrl)}
+                  onClick={() => setZoomImage(currentScreenshot.imageUrl || null)}
                   className="absolute bottom-2.5 left-2.5 z-20 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-black/80 hover:bg-gold-500 hover:text-navy-950 text-slate-200 border border-navy-700 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
                   title="Click để phóng to ảnh xem chi tiết"
                 >
