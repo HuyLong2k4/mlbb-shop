@@ -13,16 +13,8 @@ const formatVND = (amount: number) => {
 };
 
 // Cấu hình style đại diện cho từng Cấp Điểm Sưu Tập MLBB
-const getTierBadgeInfo = (tier?: string, fallbackRank?: string) => {
-  const currentTier =
-    tier ||
-    (fallbackRank === "Chí Tôn"
-      ? "Sưu tập thiên hà"
-      : fallbackRank === "Vinh Quang Thần Thoại"
-      ? "Nhà đại sưu tập"
-      : fallbackRank === "Thần Thoại"
-      ? "Sưu tập siêu cấp"
-      : "Sưu tập truyền kỳ");
+const getTierBadgeInfo = (tier?: string) => {
+  const currentTier = tier || "Sưu tập truyền kỳ";
 
   switch (currentTier) {
     case "Sưu tập thiên hà":
@@ -81,18 +73,9 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
       // Ẩn tài khoản đã bán
       if (account.status && account.status !== "Còn hàng") return false;
 
-      // 1. Lọc theo Điểm Sưu Tập (kèm fallback rank nếu nick cũ chưa có tier)
+      // 1. Lọc theo Điểm Sưu Tập
       if (selectedTier !== "ALL") {
-        const computedTier =
-          account.collectionTier ||
-          (account.rank === "Chí Tôn"
-            ? "Sưu tập thiên hà"
-            : account.rank === "Vinh Quang Thần Thoại"
-            ? "Nhà đại sưu tập"
-            : account.rank === "Thần Thoại"
-            ? "Sưu tập siêu cấp"
-            : "Sưu tập truyền kỳ");
-
+        const computedTier = account.collectionTier || "Sưu tập truyền kỳ";
         if (computedTier !== selectedTier) return false;
       }
 
@@ -288,7 +271,7 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
           {currentSlice.map((account) => {
-            const tierInfo = getTierBadgeInfo(account.collectionTier, account.rank);
+            const tierInfo = getTierBadgeInfo(account.collectionTier);
             const isAvailable = account.status === "Còn hàng";
             const displayImg =
               (account as any).images?.[0] ||

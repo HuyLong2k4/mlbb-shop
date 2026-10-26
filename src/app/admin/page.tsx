@@ -25,7 +25,7 @@ interface AccountFormData {
   title: string;
   price: number | "";
   originalPrice: number | "";
-  rank: string;
+  rank?: string;
   collectionTier: string;
   heroCount: number | "";
   skinCount: number | "";
@@ -489,8 +489,8 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Hàng 2: Giá Bán, Giá Gốc, Điểm Sưu Tập, Bậc Rank, Trạng Thái */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+          {/* Hàng 2: Giá Bán, Giá Gốc, Điểm Sưu Tập, Trạng Thái */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
                 Giá bán (VNĐ) <span className="text-red-400">*</span>
@@ -537,24 +537,6 @@ export default function AdminPage() {
                 <option value="Sưu tập siêu cấp">Sưu tập siêu cấp</option>
                 <option value="Sưu tập truyền kỳ">Sưu tập truyền kỳ</option>
                 <option value="Khác">Khác (Điểm sưu tập khác)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
-                Bậc Rank cao nhất <span className="text-red-400">*</span>
-              </label>
-              <select
-                name="rank"
-                value={formData.rank}
-                onChange={handleChange}
-                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 cursor-pointer"
-              >
-                <option value="Sử Thi">Sử Thi (Epic)</option>
-                <option value="Huyền Thoại">Huyền Thoại (Legend)</option>
-                <option value="Thần Thoại">Thần Thoại (Mythic)</option>
-                <option value="Vinh Quang Thần Thoại">Vinh Quang Thần Thoại</option>
-                <option value="Chí Tôn">Chí Tôn (Immortal)</option>
               </select>
             </div>
 
@@ -825,7 +807,7 @@ export default function AdminPage() {
                   <th className="py-3 px-3">Ảnh</th>
                   <th className="py-3 px-3">Tiêu đề</th>
                   <th className="py-3 px-3">Giá bán</th>
-                  <th className="py-3 px-3">Điểm Sưu Tập / Rank</th>
+                  <th className="py-3 px-3">Điểm Sưu Tập</th>
                   <th className="py-3 px-3">Tướng / Skin</th>
                   <th className="py-3 px-3">Trạng thái</th>
                   <th className="py-3 px-3 text-right">Thao tác</th>
@@ -862,12 +844,9 @@ export default function AdminPage() {
                         {new Intl.NumberFormat("vi-VN").format(acc.price)} ₫
                       </td>
                       <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy-950 border border-gold-500/30 text-gold-300 inline-block mb-1">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-navy-950 border border-gold-500/30 text-gold-300 inline-block">
                           {acc.collectionTier || "Sưu tập truyền kỳ"}
                         </span>
-                        <div className="text-[10px] text-slate-400">
-                          {acc.rank}
-                        </div>
                       </td>
                       <td className="py-3 px-3 text-slate-400 font-mono">
                         {acc.heroCount} / {acc.skinCount}

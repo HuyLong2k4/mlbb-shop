@@ -25,7 +25,7 @@ export interface MLBBMockAccount {
   title: string;
   price: number; // Đơn vị: VNĐ
   originalPrice?: number; // Giá gốc trước giảm
-  rank: MLBBAccountRank;
+  rank?: MLBBAccountRank;
   collectionTier?: MLBBCollectionTier;
   heroCount: number;
   skinCount: number;

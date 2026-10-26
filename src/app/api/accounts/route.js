@@ -29,15 +29,9 @@ export async function GET(request) {
     // Xây dựng điều kiện lọc
     const filter = {};
 
-    // Lọc theo Điểm Sưu Tập (hoặc Rank tương đương nếu tài khoản cũ chưa lưu tier)
+    // Lọc theo Điểm Sưu Tập
     if (collectionTier && collectionTier !== "ALL") {
-      filter.$or = [
-        { collectionTier: collectionTier },
-        ...(collectionTier === "Sưu tập thiên hà" ? [{ rank: "Chí Tôn" }] : []),
-        ...(collectionTier === "Nhà đại sưu tập" ? [{ rank: "Vinh Quang Thần Thoại" }] : []),
-        ...(collectionTier === "Sưu tập siêu cấp" ? [{ rank: "Thần Thoại" }] : []),
-        ...(collectionTier === "Sưu tập truyền kỳ" ? [{ rank: { $in: ["Huyền Thoại", "Sử Thi"] } }] : []),
-      ];
+      filter.collectionTier = collectionTier;
     } else if (rank && rank !== "ALL") {
       filter.rank = rank;
     }
@@ -107,15 +101,19 @@ export async function POST(request) {
     await dbConnect();
     const body = await request.json();
 
-    const { id, title, price, rank } = body;
-    if (!id || !title || price === undefined || !rank) {
+    const { id, title, price } = body;
+    if (!id || !title || price === undefined) {
       return NextResponse.json(
         {
           success: false,
-          message: "Vui lòng cung cấp đầy đủ các trường bắt buộc: id, title, price, rank.",
+          message: "Vui lòng cung cấp đầy đủ các trường bắt buộc: id, title, price.",
         },
         { status: 400 }
       );
+    }
+
+    if (!body.rank) {
+      body.rank = "Thần Thoại";
     }
 
     const newAccount = await Account.create(body);

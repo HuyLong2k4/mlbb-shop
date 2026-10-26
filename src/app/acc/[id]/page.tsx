@@ -4,10 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
-  Crown,
-  Trophy,
   Shield,
-  Flame,
   Sparkles,
   CheckCircle2,
   XCircle,
@@ -26,50 +23,12 @@ import {
 import {
   mockAccounts,
   MLBBMockAccount,
-  MLBBAccountRank,
 } from "@/data/mockAccounts";
 import { siteConfig } from "@/config/site";
 
 // Format tiền tệ VNĐ
 const formatVND = (amount: number) => {
   return new Intl.NumberFormat("vi-VN").format(amount) + " ₫";
-};
-
-// Cấu hình huy hiệu Rank MLBB
-const getRankBadgeInfo = (rank: MLBBAccountRank | string) => {
-  switch (rank) {
-    case "Chí Tôn":
-      return {
-        icon: Crown,
-        badgeStyle: "bg-gradient-to-r from-red-600 to-amber-600 text-white border-amber-400 shadow-red-500/30",
-        iconColor: "text-amber-300",
-      };
-    case "Vinh Quang Thần Thoại":
-      return {
-        icon: Trophy,
-        badgeStyle: "bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-navy-950 font-black border-yellow-300 shadow-gold-sm",
-        iconColor: "text-navy-950",
-      };
-    case "Thần Thoại":
-      return {
-        icon: Trophy,
-        badgeStyle: "bg-amber-500/20 text-gold-300 border-gold-500/50",
-        iconColor: "text-gold-400",
-      };
-    case "Huyền Thoại":
-      return {
-        icon: Flame,
-        badgeStyle: "bg-orange-500/20 text-orange-300 border-orange-500/40",
-        iconColor: "text-orange-400",
-      };
-    case "Sử Thi":
-    default:
-      return {
-        icon: Shield,
-        badgeStyle: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
-        iconColor: "text-cyan-400",
-      };
-  }
 };
 
 export default function AccountDetailPage() {
@@ -182,8 +141,6 @@ export default function AccountDetailPage() {
     );
   }
 
-  const rankInfo = getRankBadgeInfo(account.rank || "Thần Thoại");
-  const RankIcon = rankInfo.icon;
   const isAvailable = account.status === "Còn hàng";
 
   // Chuẩn hóa danh sách ảnh (ưu tiên screenshots, fallback sang images URL)
@@ -342,7 +299,7 @@ export default function AccountDetailPage() {
                 {/* Trung tâm: Huy hiệu & Tiêu đề ảnh */}
                 <div className="relative z-20 my-auto text-center space-y-3 py-6">
                   <div className="inline-flex p-4 rounded-2xl bg-navy-900/90 border border-gold-500/40 shadow-gold-sm">
-                    <RankIcon className={`w-14 h-14 ${rankInfo.iconColor}`} />
+                    <Award className="w-14 h-14 text-gold-400" />
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-black uppercase text-slate-100 tracking-wide">
@@ -454,22 +411,8 @@ export default function AccountDetailPage() {
                 #{account.id}
               </span>
 
-              <div
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-black uppercase tracking-wider border shadow-sm ${rankInfo.badgeStyle}`}
-              >
-                <RankIcon className="w-3.5 h-3.5" />
-                <span>{account.rank}</span>
-              </div>
-
-              <span className="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                {account.collectionTier ||
-                  (account.rank === "Chí Tôn"
-                    ? "Sưu tập thiên hà"
-                    : account.rank === "Vinh Quang Thần Thoại"
-                    ? "Nhà đại sưu tập"
-                    : account.rank === "Thần Thoại"
-                    ? "Sưu tập siêu cấp"
-                    : "Sưu tập truyền kỳ")}
+              <span className="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                {account.collectionTier || "Sưu tập truyền kỳ"}
               </span>
 
               {isAvailable ? (

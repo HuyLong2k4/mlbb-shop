@@ -83,20 +83,10 @@ const AccountSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Bậc Rank cao nhất của tài khoản
+    // Bậc Rank cao nhất của tài khoản (Tùy chọn)
     rank: {
       type: String,
-      required: [true, "Bậc Rank là bắt buộc"],
-      enum: {
-        values: [
-          "Sử Thi",
-          "Huyền Thoại",
-          "Thần Thoại",
-          "Vinh Quang Thần Thoại",
-          "Chí Tôn",
-        ],
-        message: "{VALUE} không phải là bậc Rank hợp lệ trong MLBB",
-      },
+      default: "Thần Thoại",
       index: true,
     },
 

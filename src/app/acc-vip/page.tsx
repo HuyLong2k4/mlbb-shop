@@ -29,11 +29,11 @@ export default function AccVipPage() {
               title: acc.title,
               code: acc.id,
               category: "VIP" as const,
-              rank: acc.rank,
+              collectionTier: acc.collectionTier || "Sưu tập truyền kỳ",
               skinCount: acc.skinCount || 0,
               heroCount: acc.heroCount || 0,
               highlightSkin:
-                acc.highlightSkins?.[0] || acc.highlightSkins?.join(", ") || acc.rank,
+                acc.highlightSkins?.[0] || acc.highlightSkins?.join(", ") || acc.collectionTier || "VIP",
               originalPrice: acc.originalPrice || acc.price || 0,
               salePrice: acc.price || 0,
               imageUrl: acc.images?.[0] || acc.screenshots?.[0]?.imageUrl || "",
