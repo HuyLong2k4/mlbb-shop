@@ -219,19 +219,6 @@ export default function Footer() {
                   <span className="text-xs font-normal text-slate-400">({siteConfig.contact.zaloName})</span>
                 </a>
               </div>
-
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
-                  Hòm Thư Email
-                </span>
-                <a
-                  href={`mailto:${siteConfig.contact.email}`}
-                  className="text-slate-300 hover:text-gold-400 transition-colors"
-                >
-                  {siteConfig.contact.email}
-                </a>
-              </div>
-
               <div>
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">
                   Thời Gian Làm Việc

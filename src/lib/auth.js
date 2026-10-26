@@ -19,7 +19,7 @@ export const authOptions = {
         username: {
           label: "Tên đăng nhập",
           type: "text",
-          placeholder: "admin",
+          placeholder: "tqha2812",
         },
         password: {
           label: "Mật khẩu",
@@ -34,17 +34,12 @@ export const authOptions = {
           return null;
         }
 
-        const envUser = (process.env.ADMIN_USERNAME || "admin").trim();
-        const envPass = (process.env.ADMIN_PASSWORD || "admin123").trim();
+        const envUser = (process.env.ADMIN_USERNAME || "tqha2812").trim();
+        const envPass = (process.env.ADMIN_PASSWORD || "toilaquocanh5").trim();
 
-        // Chấp nhận tài khoản admin mặc định HOẶC tài khoản trong biến môi trường
-        const isUserValid =
-          inputUser.toLowerCase() === "admin" ||
-          inputUser.toLowerCase() === envUser.toLowerCase();
-
-        const isPassValid =
-          inputPass === "admin123" ||
-          inputPass === envPass;
+        // Xác thực thông tin đăng nhập theo cấu hình môi trường
+        const isUserValid = inputUser.toLowerCase() === envUser.toLowerCase();
+        const isPassValid = inputPass === envPass;
 
         if (isUserValid && isPassValid) {
           return {

@@ -19,14 +19,14 @@ export const siteConfig = {
 
   // Thông tin liên hệ chính (Single Source of Truth)
   contact: {
-    phone: cleanPhone || "0988123456",
+    phone: cleanPhone || "0334938620",
     hotline: "0947150008",
     hotlineDisplay: "0988.123.456",
     hotlineEmergency: "1900.8888",
-    zalo: cleanPhone || "0988123456",
-    zaloDisplay: "0988.123.456",
+    zalo: cleanPhone || "0334938620",
+    zaloDisplay: "0334938620",
     zaloName: "CSKH STORE",
-    zaloUrl: `https://zalo.me/${cleanPhone || "0988123456"}`,
+    zaloUrl: "http://zalo.me/84334938620",
     email: "hotro@mlbbstore.vn",
     // address: "Tòa nhà Keangnam Landmark 72, Phạm Hùng, Nam Từ Liêm, Hà Nội",
     workingHours: "08:00 - 24:00 hàng ngày",
@@ -35,11 +35,11 @@ export const siteConfig = {
 
   // Kênh kết nối mạng xã hội
   socials: {
-    facebook: "https://facebook.com/mlbbstore.official",
+    facebook: "https://www.facebook.com/share/1Dpyi3MXj8/?mibextid=wwXIfr",
     facebookDisplay: "fb.com/mlbbstore.official",
-    group: "https://t.me/mlbbstore_cskh",
+    group: "https://zalo.me/g/28le7smf3o9cd6zevshd",
     groupDisplay: "@mlbbstore_cskh",
-    zalo: `https://zalo.me/${cleanPhone || "0988123456"}`,
+    zalo: `https://zalo.me/${cleanPhone || "0334938620"}`,
   },
 
   // Cam kết vàng dịch vụ

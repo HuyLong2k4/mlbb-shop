@@ -387,7 +387,7 @@ export default function AccountDetailPage() {
           <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div className="flex items-center gap-2 text-slate-300">
               <ShieldCheck className="w-4 h-4 text-gold-400 shrink-0" />
-              <span>Hỗ trợ chu đáo</span>
+              <span>Phục vụ chu đáo</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 col-span-2 sm:col-span-1">
               <Zap className="w-4 h-4 text-gold-400 shrink-0" />
