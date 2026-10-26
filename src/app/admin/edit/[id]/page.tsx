@@ -304,7 +304,8 @@ export default function EditAccountPage() {
         throw new Error(result.message || "Lỗi khi lưu dữ liệu cập nhật.");
       }
 
-      setSuccessMsg(`Cập nhật thành công tài khoản #${formData.id}! Ảnh cũ đã được tự động dọn dẹp.`);
+      setSuccessMsg(`Cập nhật thành công tài khoản #${formData.id}! Dữ liệu trang chủ và chi tiết đã được làm mới tức thì.`);
+      router.refresh();
 
       // Tự động cuộn lên đầu để xem thông báo
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -364,9 +365,25 @@ export default function EditAccountPage() {
 
       {/* Thông báo trạng thái */}
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3 text-emerald-400">
-          <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
-          <div className="text-sm font-medium">{successMsg}</div>
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-emerald-400">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <div className="text-sm font-medium">{successMsg}</div>
+          </div>
+          <div className="flex items-center gap-2 pl-8 sm:pl-0">
+            <Link
+              href="/"
+              className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-navy-950 hover:bg-emerald-400 transition-colors inline-flex items-center gap-1 shadow-sm"
+            >
+              Xem Trang chủ →
+            </Link>
+            <Link
+              href="/admin"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-navy-950 text-slate-300 border border-navy-750 hover:text-white transition-colors"
+            >
+              Về Admin
+            </Link>
+          </div>
         </div>
       )}
 

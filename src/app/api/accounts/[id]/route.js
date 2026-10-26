@@ -180,9 +180,11 @@ export async function PATCH(request, { params }) {
 
     // Xóa cache trang chủ ngay sau khi cập nhật trạng thái
     try {
-      revalidatePath("/");
-      revalidatePath("/acc-vip");
-      revalidatePath("/acc-sinh-vien");
+      revalidatePath("/", "layout");
+      revalidatePath("/", "page");
+      revalidatePath("/acc-vip", "page");
+      revalidatePath("/acc-sinh-vien", "page");
+      revalidatePath(`/acc/${updatedAccount.id}`, "page");
       revalidateTag("accounts");
     } catch (revalErr) {
       console.warn("Revalidate warning:", revalErr);
@@ -314,9 +316,12 @@ export async function PUT(request, { params }) {
 
     // 6. Xóa cache On-demand ISR để trang chủ & trang chi tiết cập nhật tức thì
     try {
-      revalidatePath("/");
-      revalidatePath(`/acc/${updatedAccount.id}`);
-      revalidatePath("/admin");
+      revalidatePath("/", "layout");
+      revalidatePath("/", "page");
+      revalidatePath(`/acc/${updatedAccount.id}`, "page");
+      revalidatePath("/admin", "page");
+      revalidatePath("/acc-vip", "page");
+      revalidatePath("/acc-sinh-vien", "page");
       revalidateTag("accounts");
     } catch (revalErr) {
       console.warn("Revalidate warning:", revalErr);

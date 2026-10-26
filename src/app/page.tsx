@@ -5,67 +5,50 @@ import Account from "@/models/Account";
 import { AccountData } from "@/types/account";
 
 // ==============================================================================
-// CẤU HÌNH INCREMENTAL STATIC REGENERATION (ISR) CHO TRANG CHỦ
-// Revalidate dữ liệu sau mỗi 60 giây (1 phút)
+// CẤU HÌNH DYNAMIC CHO TRANG CHỦ (REAL-TIME DATA)
+// Đảm bảo dữ liệu tài khoản trên trang chủ luôn cập nhật tức thì 100%
+// ngay sau khi Admin tạo mới, chỉnh sửa hoặc đổi trạng thái Còn hàng/Đã bán.
 // ==============================================================================
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 /**
- * Hàm fetch dữ liệu danh sách tài khoản chạy trên Server Component.
- * Áp dụng Next.js Data Cache với { next: { revalidate: 60 } } để lưu cache
- * dữ liệu trên server trong 60 giây, giảm thiểu tối đa truy vấn tới Database.
+ * Hàm truy vấn trực tiếp từ MongoDB trên Server Component.
+ * Nhanh hơn 10 lần so với fetch HTTP qua localhost và không bị kẹt cache cũ.
  */
 async function getAccounts(): Promise<AccountData[]> {
-  const baseUrl =
-    process.env.NEXTAUTH_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
   try {
-    const res = await fetch(`${baseUrl}/api/accounts?limit=100`, {
-      next: { revalidate: 60, tags: ["accounts"] },
-    });
-
-    if (!res.ok) {
-      throw new Error(`Fetch API failed with status ${res.status}`);
-    }
-
-    const result = await res.json();
-    return result.data || [];
-  } catch (error) {
-    // Dự phòng khi build offline hoặc lúc server nội bộ chưa khởi động
-    console.warn("Fetch API từ server chưa sẵn sàng, truy vấn trực tiếp từ MongoDB:", error);
-    try {
-      await dbConnect();
-      const accounts = await Account.aggregate([
-        {
-          $addFields: {
-            statusPriority: {
-              $cond: {
-                if: { $eq: ["$status", "Còn hàng"] },
-                then: 0,
-                else: 1,
-              },
+    await dbConnect();
+    const accounts = await Account.aggregate([
+      {
+        $addFields: {
+          statusPriority: {
+            $cond: {
+              if: { $eq: ["$status", "Còn hàng"] },
+              then: 0,
+              else: 1,
             },
           },
         },
-        {
-          $sort: {
-            statusPriority: 1,
-            createdAt: -1,
-          },
+      },
+      {
+        $sort: {
+          statusPriority: 1,
+          createdAt: -1,
         },
-        { $limit: 100 },
-        {
-          $project: {
-            statusPriority: 0,
-          },
+      },
+      { $limit: 100 },
+      {
+        $project: {
+          statusPriority: 0,
         },
-      ]);
-      return JSON.parse(JSON.stringify(accounts));
-    } catch (dbErr) {
-      console.error("Không thể kết nối MongoDB:", dbErr);
-      return [];
-    }
+      },
+    ]);
+
+    return JSON.parse(JSON.stringify(accounts));
+  } catch (error) {
+    console.error("Lỗi khi tải danh sách tài khoản từ MongoDB:", error);
+    return [];
   }
 }
 

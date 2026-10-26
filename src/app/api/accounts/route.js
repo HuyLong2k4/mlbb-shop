@@ -142,9 +142,10 @@ export async function POST(request) {
 
     // Tự động làm mới cache trang chủ và các danh mục ngay lập tức (On-Demand ISR Revalidation)
     try {
-      revalidatePath("/");
-      revalidatePath("/acc-vip");
-      revalidatePath("/acc-sinh-vien");
+      revalidatePath("/", "layout");
+      revalidatePath("/", "page");
+      revalidatePath("/acc-vip", "page");
+      revalidatePath("/acc-sinh-vien", "page");
       revalidateTag("accounts");
     } catch (revalErr) {
       console.warn("Revalidate cache warning:", revalErr);
