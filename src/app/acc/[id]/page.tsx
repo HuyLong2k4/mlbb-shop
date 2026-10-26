@@ -567,7 +567,7 @@ export default function AccountDetailPage() {
                 className="w-full py-4 px-6 rounded-xl text-base sm:text-lg font-black uppercase tracking-wider text-navy-950 bg-gradient-to-r from-gold-400 via-amber-400 to-gold-500 hover:from-gold-300 hover:to-amber-400 shadow-gold-md hover:shadow-gold-lg transition-all duration-300 transform hover:scale-[1.01] flex items-center justify-center gap-2.5 cursor-pointer group"
               >
                 <MessageCircle className="w-5 h-5 text-navy-950" />
-                <span>THUÊ NGAY (CHUYỂN ĐẾN ZALO)</span>
+                <span>MUA NGAY (CHUYỂN ĐẾN ZALO)</span>
               </button>
             ) : (
               <button
