@@ -393,6 +393,10 @@ export default function AccountDetailPage() {
               <Zap className="w-4 h-4 text-gold-400 shrink-0" />
               <span>Giao nick 30 giây</span>
             </div>
+            <div className="flex items-center gap-2 text-slate-300 col-span-2 sm:col-span-1">
+              <Zap className="w-4 h-4 text-gold-400 shrink-0" />
+              <span>Hỗ trợ lên đời acc</span>
+            </div>
           </div>
         </div>
 
