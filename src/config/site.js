@@ -45,8 +45,8 @@ export const siteConfig = {
   // Cam kết vàng dịch vụ
   commitments: {
     warranty: "Bảo hành vĩnh viễn",
-    deliveryTime: "Giao dịch & đổi gmail trong 30 giây",
-    security: "100% Trắng Thông Tin - Đổi Gmail ngay",
+    deliveryTime: "Giao dịch nhanh chóng trong 30 giây",
+    security: "100% Trắng Thông Tin",
     refund: "Hoàn tiền 100% nếu sai mô tả",
   },
 };
