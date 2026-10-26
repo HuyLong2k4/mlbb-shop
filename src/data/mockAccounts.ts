@@ -31,7 +31,7 @@ export interface MLBBMockAccount {
   highlightSkins: string[];
   status: AccountStatus;
   winRate?: AccountWinRate;
-  emblems: string[]; // Danh sách Bảng ngọc
+  emblems: "Full" | "Gần Full" | string | string[]; // Tình trạng Bảng ngọc: "Full" hoặc "Gần Full"
   reputationScore: number; // Điểm uy tín (Max 100)
   securityInfo: string; // Trạng thái bảo mật
   description?: string;
@@ -67,14 +67,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 4820,
       rankWinRate: "75.8%",
     },
-    emblems: [
-      "Sát Thủ Lv.60 (Max)",
-      "Đấu Sĩ Lv.60 (Max)",
-      "Xạ Thủ Lv.60 (Max)",
-      "Pháp Sư Lv.60 (Max)",
-      "Hỗ Trợ Lv.60 (Max)",
-      "Xe Tăng Lv.60 (Max)",
-    ],
+    emblems: "Full",
     reputationScore: 100,
     securityInfo: "100% Trắng Thông Tin (Chưa liên kết SĐT, đổi Email sạch ngay)",
     description: "Tài khoản VIP thuộc hàng Top máy chủ Việt Nam. Sở hữu 2 skin Legend tối thượng (Granger + Gusion), trọn bộ KOF và dàn skin Aspirants cực phẩm. Bảng ngọc full max cấp không thiếu nhánh nào.",
@@ -107,12 +100,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 3650,
       rankWinRate: "71.4%",
     },
-    emblems: [
-      "Sát Thủ Lv.60 (Max)",
-      "Đấu Sĩ Lv.60 (Max)",
-      "Xạ Thủ Lv.60 (Max)",
-      "Pháp Sư Lv.60 (Max)",
-    ],
+    emblems: "Full",
     reputationScore: 100,
     securityInfo: "Trắng Thông Tin - Bảo hành vĩnh viễn không tranh chấp",
     description: "Tài khoản chuyên Sát thủ Rừng và Đấu sĩ. Đầy đủ tướng mùa mới nhất, sở hữu Franco Legend độc bản và dàn Collector cực kỳ đắt giá.",
@@ -144,11 +132,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 2900,
       rankWinRate: "68.0%",
     },
-    emblems: [
-      "Pháp Sư Lv.60 (Max)",
-      "Xạ Thủ Lv.60 (Max)",
-      "Hỗ Trợ Lv.58",
-    ],
+    emblems: "Gần Full",
     reputationScore: 100,
     securityInfo: "Đã bàn giao tài khoản thành công cho khách hàng",
     description: "Tài khoản chuyên vị trí Pháp Sư Mid Lane và Xạ Thủ Gold Lane với 2 skin Legend siêu hiếm Lesley Thiên Hà và Guinevere Hồ Điệp.",
@@ -179,10 +163,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 2450,
       rankWinRate: "81.0%",
     },
-    emblems: [
-      "Sát Thủ Lv.60 (Max)",
-      "Đấu Sĩ Lv.60 (Max)",
-    ],
+    emblems: "Full",
     reputationScore: 100,
     securityInfo: "Trắng Thông Tin 100% - Bảo hành trọn đời tài khoản",
     description: "Dành riêng cho các thần đồng leo rank bằng Fanny và Chou. Tỉ lệ thắng siêu khủng 78% với chuỗi thắng dài, sẵn sàng gánh team mọi bậc rank.",
@@ -212,11 +193,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 1850,
       rankWinRate: "64.5%",
     },
-    emblems: [
-      "Xạ Thủ Lv.58",
-      "Sát Thủ Lv.55",
-      "Đấu Sĩ Lv.52",
-    ],
+    emblems: "Gần Full",
     reputationScore: 100,
     securityInfo: "Trắng Thông Tin - Đổi sang Gmail mới của bạn ngay",
     description: "Tài khoản giá tầm trung nhưng sở hữu skin hợp tác Transformers Megatron và Beatrix Prime cực kỳ ngầu. Thích hợp leo rank Thần Thoại.",
@@ -245,10 +222,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 1200,
       rankWinRate: "67.8%",
     },
-    emblems: [
-      "Sát Thủ Lv.60 (Max)",
-      "Đấu Sĩ Lv.50",
-    ],
+    emblems: "Full",
     reputationScore: 100,
     securityInfo: "Đã giao dịch hoàn tất qua MoMo tự động",
     description: "Nick smurf cày chay cực chuẩn, điểm uy tín tuyệt đối, đã mở đủ tướng đi rừng phổ biến.",
@@ -276,11 +250,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 850,
       rankWinRate: "60.2%",
     },
-    emblems: [
-      "Đấu Sĩ Lv.52",
-      "Sát Thủ Lv.48",
-      "Xạ Thủ Lv.45",
-    ],
+    emblems: "Gần Full",
     reputationScore: 100,
     securityInfo: "100% Trắng Thông Tin - Đổi pass trong 30 giây",
     description: "Mức giá cực kỳ sinh viên chỉ bằng vài cốc trà sữa. Đầy đủ các tướng quốc dân Chou, Alucard, Zilong, Miya để quẩy rank cùng bạn bè.",
@@ -308,10 +278,7 @@ export const mockAccounts: MLBBMockAccount[] = [
       totalMatches: 620,
       rankWinRate: "57.5%",
     },
-    emblems: [
-      "Xạ Thủ Lv.48",
-      "Pháp Sư Lv.42",
-    ],
+    emblems: "Gần Full",
     reputationScore: 100,
     securityInfo: "100% Trắng Thông Tin - Nhận nick tự động ngay sau thanh toán",
     description: "Acc giá rẻ nhất shop cho người mới chơi hoặc game thủ muốn tập chơi Xạ Thủ. Sở hữu skin Miya Legend và Layla Aspirants siêu đáng yêu.",

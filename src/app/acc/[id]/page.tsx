@@ -210,9 +210,24 @@ export default function AccountDetailPage() {
     ? account.highlightSkins
     : [];
 
-  const emblemsList: string[] = Array.isArray(account.emblems)
-    ? account.emblems
-    : [];
+  // Xác định tình trạng Bảng ngọc: "Full" hoặc "Gần Full"
+  const emblemStatus: string =
+    typeof account.emblems === "string"
+      ? account.emblems
+      : Array.isArray(account.emblems) && account.emblems.length > 0
+      ? account.emblems.some((e: string) =>
+          String(e).toLowerCase().includes("gần full") ||
+          String(e).includes("55") ||
+          String(e).includes("52") ||
+          String(e).includes("48")
+        )
+        ? "Gần Full"
+        : "Full"
+      : "Full";
+
+  const isFullEmblems =
+    emblemStatus.toLowerCase().includes("full") &&
+    !emblemStatus.toLowerCase().includes("gần");
 
   const handlePrevImage = () => {
     setActiveImageIndex((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1));
@@ -506,32 +521,37 @@ export default function AccountDetailPage() {
           {/* CÁC CHỈ SỐ CHI TIẾT (BẢNG NGỌC, SKIN HIẾM)                        */}
           {/* =================================================================== */}
           <div className="space-y-4">
-            {/* Bảng ngọc (Emblems) */}
-            {emblemsList.length > 0 && (
-              <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
-                    <Award className="w-4 h-4 text-gold-400" />
-                    <span>Bảng Ngọc & Bổ Trợ (Emblems)</span>
-                  </div>
-                  <span className="text-[11px] font-bold text-gold-400 uppercase">
-                    {emblemsList.length} Bảng chính
-                  </span>
+            {/* Tình trạng Bảng ngọc (Emblems) */}
+            <div className="p-4 rounded-xl bg-navy-900 border border-navy-800 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-200">
+                  <Award className="w-4 h-4 text-gold-400" />
+                  <span>Tình Trạng Bảng Ngọc</span>
                 </div>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {emblemsList.map((emblem: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-navy-950 border border-navy-700 text-slate-200 flex items-center gap-1.5"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
-                      <span>{emblem}</span>
-                    </span>
-                  ))}
-                </div>
+                <span className="text-[11px] text-slate-400">
+                  Xem chi tiết ở ảnh in-game
+                </span>
               </div>
-            )}
+
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                {isFullEmblems ? (
+                  <span className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Full Bảng Ngọc (Max)</span>
+                  </span>
+                ) : (
+                  <span className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500/15 border border-amber-500/40 text-amber-300 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-400" />
+                    <span>Gần Full Bảng Ngọc</span>
+                  </span>
+                )}
+                <span className="text-xs text-slate-400">
+                  {isFullEmblems
+                    ? "Tất cả các nhánh bảng ngọc bổ trợ đã đạt cấp tối đa."
+                    : "Đã nâng cấp hầu hết các nhánh ngọc bổ trợ quan trọng."}
+                </span>
+              </div>
+            </div>
 
             {/* 3. Danh sách Skin hiếm */}
             {highlightSkinsList.length > 0 && (

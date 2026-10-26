@@ -158,10 +158,10 @@ const AccountSchema = new mongoose.Schema(
       }),
     },
 
-    // Danh sách các bảng ngọc / bổ trợ đã nâng cấp
+    // Tình trạng bảng ngọc: "Full" hoặc "Gần Full"
     emblems: {
-      type: [String],
-      default: [],
+      type: mongoose.Schema.Types.Mixed,
+      default: "Full",
     },
 
     // Điểm uy tín trong game (Max 100)

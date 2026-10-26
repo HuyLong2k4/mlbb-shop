@@ -31,7 +31,7 @@ interface AccountFormData {
   skinCount: number | "";
   highlightSkins: string; // Phân cách bằng dấu phẩy
   status: string;
-  emblems: string; // Phân cách bằng dấu phẩy
+  emblems: string; // "Full" | "Gần Full"
   description: string;
 }
 
@@ -46,7 +46,7 @@ const initialForm: AccountFormData = {
   skinCount: 100,
   highlightSkins: "Gusion - Cosmic Gleam (Legend), Chou - Iori Yagami (KOF)",
   status: "Còn hàng",
-  emblems: "Sát Thủ Lv.60, Đấu Sĩ Lv.60, Xạ Thủ Lv.55",
+  emblems: "Full",
   description: "Tài khoản chính chủ trắng thông tin, bảo hành đổi trả vĩnh viễn.",
 };
 
@@ -285,13 +285,6 @@ export default function AdminPage() {
           .filter((s) => s.length > 0)
       : [];
 
-    const emblemsArray = formData.emblems
-      ? formData.emblems
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s.length > 0)
-      : [];
-
     // Chuyển mảng URL ảnh Cloudinary thành cấu trúc screenshots chuẩn
     const screenshotsArray =
       uploadedImages.length > 0
@@ -326,7 +319,7 @@ export default function AdminPage() {
       skinCount: Number(formData.skinCount) || 0,
       highlightSkins: skinsArray,
       status: formData.status,
-      emblems: emblemsArray,
+      emblems: formData.emblems || "Full",
       description: formData.description,
       reputationScore: 100,
       securityInfo: "100% Trắng Thông Tin - Đổi Gmail ngay",
@@ -727,16 +720,20 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold uppercase text-slate-300 mb-1.5">
-                Bảng ngọc đã nâng (Phân cách bằng dấu phẩy)
+                Tình trạng Bảng ngọc
               </label>
-              <input
-                type="text"
+              <select
                 name="emblems"
-                placeholder="VD: Sát Thủ Lv.60, Đấu Sĩ Lv.60, Xạ Thủ Lv.55"
                 value={formData.emblems}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-gold-500"
-              />
+                className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-gold-500"
+              >
+                <option value="Full">Full (Đầy đủ bảng ngọc max cấp)</option>
+                <option value="Gần Full">Gần Full (Đã nâng gần hết)</option>
+              </select>
+              <p className="text-[11px] text-slate-500 mt-1">
+                * Khách hàng có thể xem chi tiết từng cấp ngọc ở ảnh chụp màn hình in-game.
+              </p>
             </div>
 
             <div>

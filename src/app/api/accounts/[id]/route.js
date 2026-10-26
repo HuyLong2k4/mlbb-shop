@@ -95,7 +95,19 @@ export async function GET(request, { params }) {
 
     // Chuẩn hóa các trường bổ sung
     account.highlightSkins = Array.isArray(account.highlightSkins) ? account.highlightSkins : [];
-    account.emblems = Array.isArray(account.emblems) ? account.emblems : [];
+    account.emblems =
+      typeof account.emblems === "string"
+        ? account.emblems
+        : Array.isArray(account.emblems) && account.emblems.length > 0
+        ? account.emblems.some((e) =>
+            String(e).toLowerCase().includes("gần full") ||
+            String(e).includes("55") ||
+            String(e).includes("52") ||
+            String(e).includes("48")
+          )
+          ? "Gần Full"
+          : "Full"
+        : "Full";
     account.reputationScore = account.reputationScore ?? 100;
     account.securityInfo = account.securityInfo || "100% Trắng Thông Tin (Chính chủ)";
     account.winRate = account.winRate || {
