@@ -581,8 +581,7 @@ export default function AccountDetailPage() {
 
             <div className="text-center space-y-1.5 pt-1">
               <p className="text-xs text-slate-300">
-                Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán (Hotline:{" "}
-                <strong className="text-gold-400 font-mono">{siteConfig.contact.hotline}</strong>) để giao dịch trực tiếp & nhận acc ngay.
+                Bấm <strong className="text-gold-400">Mua Ngay</strong> sẽ chuyển thẳng đến Zalo người bán để giao dịch trực tiếp & nhận acc ngay.
               </p>
             </div>
           </div>

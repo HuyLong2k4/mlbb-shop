@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, RefreshCw } from "lucide-react";
@@ -66,6 +66,23 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
     router.refresh();
     setTimeout(() => setIsRefreshing(false), 800);
   };
+
+  // Lắng nghe sự kiện click vào Logo để reset toàn bộ bộ lọc & hiển thị lại tất cả tài khoản
+  useEffect(() => {
+    const handleResetFilters = () => {
+      setSelectedTier("ALL");
+      setSelectedPriceRange("ALL");
+      setSearchKeyword("");
+      setCurrentPage(1);
+      router.refresh();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.addEventListener("reset-account-filters", handleResetFilters);
+    return () => {
+      window.removeEventListener("reset-account-filters", handleResetFilters);
+    };
+  }, [router]);
 
   // Lọc danh sách theo Điểm sưu tập, Mức giá và Từ khóa
   const filteredAccounts = useMemo(() => {
@@ -209,8 +226,8 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
               className="w-full px-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 transition-colors cursor-pointer"
             >
               <option value="ALL">Tất cả mức giá</option>
-              <option value="VIP_ABOVE_1M">Từ 1.000.000 ₫ trở lên (Acc VIP)</option>
-              <option value="STUDENT_UNDER_1M">Dưới 1.000.000 ₫ (Acc Sinh Viên)</option>
+              {/* <option value="VIP_ABOVE_1M">Từ 1.000.000 ₫ trở lên (Acc VIP)</option>
+              <option value="STUDENT_UNDER_1M">Dưới 1.000.000 ₫ (Acc Sinh Viên)</option> */}
               <option value="UNDER_500K">Dưới 500.000 ₫ (Giá rẻ)</option>
               <option value="500K_1M">500.000 ₫ - 1.000.000 ₫</option>
               <option value="1M_3M">1.000.000 ₫ - 3.000.000 ₫ (VIP)</option>

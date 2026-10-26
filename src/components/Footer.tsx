@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -86,7 +88,15 @@ export default function Footer() {
           
           {/* CỘT 1 (4/12): THƯƠNG HIỆU & GIỚI THIỆU */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="inline-flex items-center gap-2.5 group">
+            <Link
+              href="/"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent("reset-account-filters"));
+                }
+              }}
+              className="inline-flex items-center gap-2.5 group cursor-pointer"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"

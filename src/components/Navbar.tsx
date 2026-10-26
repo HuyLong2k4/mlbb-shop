@@ -62,6 +62,14 @@ export default function Navbar() {
     };
   }, [mobileMenuOpen]);
 
+  // Xử lý khi nhấn vào Logo hoặc menu Trang chủ: Quay về trang chủ và kích hoạt reset toàn bộ bộ lọc
+  const handleLogoClick = () => {
+    setMobileMenuOpen(false);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("reset-account-filters"));
+    }
+  };
+
   return (
     <>
       <header
@@ -96,7 +104,11 @@ export default function Navbar() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Logo Thương Hiệu */}
-            <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+            <Link
+              href="/"
+              onClick={handleLogoClick}
+              className="flex items-center gap-2.5 group shrink-0 cursor-pointer"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
@@ -121,6 +133,11 @@ export default function Navbar() {
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={() => {
+                      if (item.href === "/") {
+                        handleLogoClick();
+                      }
+                    }}
                     className={`relative px-4 py-2 rounded-lg text-xs lg:text-sm font-semibold tracking-wide transition-all ${
                       isActive
                         ? "text-gold-400 font-bold bg-navy-900 border border-gold-500/30"
@@ -199,7 +216,11 @@ export default function Navbar() {
       >
         <div className="space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-navy-850">
-            <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
@@ -209,7 +230,7 @@ export default function Navbar() {
               <span className="text-base font-black uppercase text-slate-100">
                 MLBB <span className="text-gold-400">STORE</span>
               </span>
-            </div>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
@@ -227,7 +248,13 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    if (item.href === "/") {
+                      handleLogoClick();
+                    } else {
+                      setMobileMenuOpen(false);
+                    }
+                  }}
                   className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${
                     isActive
                       ? "text-gold-400 font-bold bg-navy-900 border border-gold-500/30"
