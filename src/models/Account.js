@@ -100,20 +100,11 @@ const AccountSchema = new mongoose.Schema(
       index: true,
     },
 
-    // Cấp bậc Điểm Sưu Tập trong MLBB
+    // Cấp bậc Điểm Sưu Tập trong MLBB (Sưu tập thiên hà, Nhà đại sưu tập, Sưu tập siêu cấp, Sưu tập truyền kỳ, Khác...)
     collectionTier: {
       type: String,
-      enum: {
-        values: [
-          "Sưu tập truyền kỳ",
-          "Sưu tập siêu cấp",
-          "Nhà đại sưu tập",
-          "Sưu tập thiên hà",
-          "Khác",
-        ],
-        message: "{VALUE} không phải là bậc Điểm sưu tập hợp lệ",
-      },
       default: "Sưu tập truyền kỳ",
+      trim: true,
       index: true,
     },
 
@@ -204,6 +195,11 @@ const AccountSchema = new mongoose.Schema(
     versionKey: false,
   }
 );
+
+// Xóa cache model cũ trong Mongoose để luôn nhận Schema mới nhất (tránh lỗi cache RAM trong Next.js dev)
+if (mongoose.models && mongoose.models.Account) {
+  delete mongoose.models.Account;
+}
 
 const Account = mongoose.models.Account || mongoose.model("Account", AccountSchema);
 
