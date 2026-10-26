@@ -59,7 +59,6 @@ export async function POST(request) {
           {
             folder: "mlbb_accounts",
             resource_type: "image",
-            transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
           },
           (error, result) => {
             if (error) {
@@ -94,9 +93,14 @@ export async function POST(request) {
   } catch (error) {
     console.error("Lỗi API Upload:", error);
     let errorMsg = error?.message || "Quá trình upload ảnh lên Cloudinary thất bại.";
-    if (typeof errorMsg === "string" && errorMsg.includes("api_secret mismatch")) {
+    if (
+      typeof errorMsg === "string" &&
+      (errorMsg.includes("api_secret mismatch") ||
+        errorMsg.includes("Invalid Signature") ||
+        error?.http_code === 401)
+    ) {
       errorMsg =
-        "Khóa bí mật API Secret không khớp (api_secret mismatch). Vui lòng đăng nhập console.cloudinary.com để copy lại chính xác API Secret mới nhất.";
+        "Khóa bí mật CLOUDINARY_API_SECRET trong file .env.local không khớp với tài khoản Cloudinary (mã lỗi 401: Invalid Signature). Vui lòng đăng nhập https://console.cloudinary.com/pm/ -> copy lại API Secret chính xác và dán vào file .env.local.";
     }
 
     return NextResponse.json(
