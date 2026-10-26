@@ -36,24 +36,46 @@ export async function GET(request) {
       filter.rank = rank;
     }
 
-    // Mặc định ẩn các tài khoản đã bán, chỉ hiển thị tài khoản "Còn hàng"
-    // Trừ khi truyền status=ALL (dành cho Admin quản trị xem toàn bộ kho)
-    if (status === "ALL") {
-      // Không lọc theo status
-    } else if (status) {
+    // Lọc theo trạng thái:
+    // Nếu status="ALL" hoặc không truyền status, sẽ lấy tất cả trạng thái (cả Còn hàng và Đã bán/Hết hàng)
+    // Nếu truyền status cụ thể (ví dụ: status=Còn hàng), chỉ lọc theo trạng thái đó
+    if (status && status !== "ALL") {
       filter.status = status;
-    } else {
-      filter.status = "Còn hàng";
     }
 
     // Thực hiện song song đếm tổng số bản ghi và truy vấn trang hiện tại
+    // Áp dụng Aggregation Pipeline để tối ưu sắp xếp 2 tầng:
+    // Tầng 1: Ưu tiên 'Còn hàng' (priority 0) lên đầu, các trạng thái khác ('Đã bán', 'Hết hàng' - priority 1) xuống cuối
+    // Tầng 2: Trong cùng một nhóm, sắp xếp createdAt giảm dần (-1, mới nhất lên trước)
     const [total, accounts] = await Promise.all([
       Account.countDocuments(filter),
-      Account.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      Account.aggregate([
+        { $match: filter },
+        {
+          $addFields: {
+            statusPriority: {
+              $cond: {
+                if: { $eq: ["$status", "Còn hàng"] },
+                then: 0,
+                else: 1,
+              },
+            },
+          },
+        },
+        {
+          $sort: {
+            statusPriority: 1,
+            createdAt: -1,
+          },
+        },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $project: {
+            statusPriority: 0,
+          },
+        },
+      ]),
     ]);
 
     const totalPages = Math.ceil(total / limit) || 1;

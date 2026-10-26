@@ -85,11 +85,9 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
   }, [router]);
 
   // Lọc danh sách theo Điểm sưu tập, Mức giá và Từ khóa
+  // Đồng thời duy trì quy tắc: 'Còn hàng' lên đầu, 'Đã bán'/'Hết hàng' xuống cuối, trong cùng nhóm thì mới nhất lên trước
   const filteredAccounts = useMemo(() => {
-    return initialAccounts.filter((account) => {
-      // Ẩn tài khoản đã bán
-      if (account.status && account.status !== "Còn hàng") return false;
-
+    const list = initialAccounts.filter((account) => {
       // 1. Lọc theo Điểm Sưu Tập
       if (selectedTier !== "ALL") {
         const computedTier = account.collectionTier || "Sưu tập truyền kỳ";
@@ -126,6 +124,19 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
       }
 
       return true;
+    });
+
+    // Sắp xếp ưu tiên: 'Còn hàng' (0) lên đầu, 'Đã bán'/'Hết hàng' (1) xuống cuối
+    // Trong cùng nhóm trạng thái, tài khoản mới tạo (createdAt mới nhất) lên trước
+    return [...list].sort((a, b) => {
+      const aPriority = a.status === "Còn hàng" ? 0 : 1;
+      const bPriority = b.status === "Còn hàng" ? 0 : 1;
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+      }
+      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return timeB - timeA;
     });
   }, [initialAccounts, selectedTier, selectedPriceRange, searchKeyword]);
 

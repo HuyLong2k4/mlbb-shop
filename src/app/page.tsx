@@ -21,7 +21,7 @@ async function getAccounts(): Promise<AccountData[]> {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
   try {
-    const res = await fetch(`${baseUrl}/api/accounts?status=Còn%20hàng&limit=100`, {
+    const res = await fetch(`${baseUrl}/api/accounts?limit=100`, {
       next: { revalidate: 60, tags: ["accounts"] },
     });
 
@@ -36,10 +36,31 @@ async function getAccounts(): Promise<AccountData[]> {
     console.warn("Fetch API từ server chưa sẵn sàng, truy vấn trực tiếp từ MongoDB:", error);
     try {
       await dbConnect();
-      const accounts = await Account.find({ status: "Còn hàng" })
-        .sort({ createdAt: -1 })
-        .limit(100)
-        .lean();
+      const accounts = await Account.aggregate([
+        {
+          $addFields: {
+            statusPriority: {
+              $cond: {
+                if: { $eq: ["$status", "Còn hàng"] },
+                then: 0,
+                else: 1,
+              },
+            },
+          },
+        },
+        {
+          $sort: {
+            statusPriority: 1,
+            createdAt: -1,
+          },
+        },
+        { $limit: 100 },
+        {
+          $project: {
+            statusPriority: 0,
+          },
+        },
+      ]);
       return JSON.parse(JSON.stringify(accounts));
     } catch (dbErr) {
       console.error("Không thể kết nối MongoDB:", dbErr);
