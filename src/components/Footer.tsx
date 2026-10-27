@@ -236,7 +236,7 @@ export default function Footer() {
 
             {/* Banner nhỏ eSports với hiệu ứng sang trọng */}
             <div className="relative rounded-2xl overflow-hidden border border-gold-500/40 bg-navy-900 shadow-gold-sm hover:border-gold-400 transition-all duration-300 group">
-              <Link href="/" className="block relative aspect-video w-full overflow-hidden">
+              <Link href="/" className="block relative aspect-square w-full overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/footer-banner.png"
