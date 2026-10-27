@@ -131,7 +131,7 @@ export async function POST(request) {
     const body = await request.json();
 
     const { id, title, price } = body;
-    if (!id || !title || price === undefined) {
+    if (!id || !title || price === undefined || price === "") {
       return NextResponse.json(
         {
           success: false,
@@ -139,6 +139,57 @@ export async function POST(request) {
         },
         { status: 400 }
       );
+    }
+
+    // Chuẩn hóa và kiểm tra tính hợp lệ của mã tài khoản ID
+    body.id = String(id).trim().toUpperCase();
+
+    // Kiểm tra tính hợp lệ của giá bán (chống giá âm hoặc chuỗi không phải số)
+    const numPrice = Number(price);
+    if (isNaN(numPrice) || numPrice < 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Giá bán không hợp lệ (phải là số và không được nhỏ hơn 0 VNĐ).",
+        },
+        { status: 400 }
+      );
+    }
+    body.price = numPrice;
+
+    // Chuẩn hóa giá gốc niêm yết
+    if (body.originalPrice !== undefined && body.originalPrice !== null && body.originalPrice !== "") {
+      const numOriginal = Number(body.originalPrice);
+      if (isNaN(numOriginal) || numOriginal < 0) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Giá niêm yết (giá gốc) không hợp lệ.",
+          },
+          { status: 400 }
+        );
+      }
+      body.originalPrice = numOriginal;
+    } else {
+      body.originalPrice = null;
+    }
+
+    // Chuẩn hóa highlightSkins từ chuỗi sang mảng nếu cần
+    if (typeof body.highlightSkins === "string") {
+      body.highlightSkins = body.highlightSkins
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+
+    // Tự động đồng bộ screenshots từ mảng images nếu chưa có
+    if (Array.isArray(body.images) && (!body.screenshots || body.screenshots.length === 0)) {
+      body.screenshots = body.images.map((url, idx) => ({
+        id: idx + 1,
+        title: `Ảnh in-game #${idx + 1}`,
+        caption: `Chi tiết tài khoản #${body.id}`,
+        imageUrl: url,
+      }));
     }
 
     if (!body.rank) {
