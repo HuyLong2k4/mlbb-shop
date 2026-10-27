@@ -155,6 +155,18 @@ export async function PATCH(request, { params }) {
       }
     }
 
+    // Kiểm tra tính hợp lệ của giá bán nếu có cập nhật
+    if (updatePayload.price !== undefined) {
+      const numPrice = Number(updatePayload.price);
+      if (isNaN(numPrice) || numPrice < 0) {
+        return NextResponse.json(
+          { success: false, message: "Giá bán không hợp lệ (không được nhỏ hơn 0 VNĐ)." },
+          { status: 400 }
+        );
+      }
+      updatePayload.price = numPrice;
+    }
+
     if (Object.keys(updatePayload).length === 0) {
       return NextResponse.json(
         { success: false, message: "Không có dữ liệu hợp lệ để cập nhật" },
@@ -173,7 +185,7 @@ export async function PATCH(request, { params }) {
         ],
       },
       { $set: updatePayload },
-      { new: true, runValidators: false }
+      { new: true, runValidators: true }
     ).lean();
 
     if (!updatedAccount) {
@@ -266,7 +278,16 @@ export async function PUT(request, { params }) {
     const updateData = {};
 
     if (body.title !== undefined) updateData.title = String(body.title).trim();
-    if (body.price !== undefined) updateData.price = Number(body.price);
+    if (body.price !== undefined) {
+      const numPrice = Number(body.price);
+      if (isNaN(numPrice) || numPrice < 0) {
+        return NextResponse.json(
+          { success: false, message: "Giá bán không hợp lệ (không được nhỏ hơn 0 VNĐ)." },
+          { status: 400 }
+        );
+      }
+      updateData.price = numPrice;
+    }
     if (body.originalPrice !== undefined) {
       updateData.originalPrice = body.originalPrice === "" ? null : Number(body.originalPrice);
     }
