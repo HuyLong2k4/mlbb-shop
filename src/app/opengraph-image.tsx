@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "MLBB STORE - Sàn Giao Dịch Tài Khoản Mobile Legends: Bang Bang Uy Tín #1";
+export const alt = "SHOP QAUT - Sàn Giao Dịch Tài Khoản Mobile Legends: Bang Bang Uy Tín #1";
 export const size = {
   width: 1200,
   height: 630,
@@ -71,7 +71,7 @@ export default async function Image() {
             textAlign: "center",
           }}
         >
-          MLBB <span style={{ color: "#eab308", marginLeft: 18 }}>STORE</span>
+          SHOP <span style={{ color: "#eab308", marginLeft: 18 }}>QAUT</span>
         </div>
 
         {/* Subtitle */}

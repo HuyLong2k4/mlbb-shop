@@ -299,7 +299,7 @@ export default function AccountDetailPage() {
                     </p>
                   </div>
                   <div className="inline-block px-3 py-1 rounded-full bg-navy-950/90 border border-navy-700 text-[11px] font-mono text-slate-400">
-                    Ảnh chụp bảo chứng thực tế tại MLBB STORE
+                    Ảnh chụp bảo chứng thực tế tại SHOP QAUT
                   </div>
                 </div>
 

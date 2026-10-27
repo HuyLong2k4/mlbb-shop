@@ -29,7 +29,7 @@ export default function Footer() {
                   100% Uy Tín
                 </h4>
                 <p className="text-[11px] sm:text-xs text-slate-400 font-medium truncate">
-                  Bảo hành trọn đời mọi nick
+                  Bảo hành đầy đủ
                 </p>
               </div>
             </div>
@@ -105,7 +105,7 @@ export default function Footer() {
               />
               <div className="flex items-baseline gap-1.5">
                 <span className="text-2xl font-black tracking-tight uppercase text-slate-100">
-                  MLBB <span className="text-gold-400">STORE</span>
+                  SHOP <span className="text-gold-400">QAUT</span>
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   eSports

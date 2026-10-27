@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "acc mlbb sinh vien gia re",
     "acc rank than thoai",
     "full skin collector mlbb",
-    "mlbb store",
+    "shop qaut",
   ],
   authors: [{ name: `${siteConfig.name} TEAM` }],
   creator: siteConfig.name,
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   // Cấu hình Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "MLBB STORE - Shop Bán Acc Mobile Legends: Bang Bang Uy Tín #1",
+    title: "SHOP QAUT - Shop Bán Acc Mobile Legends: Bang Bang Uy Tín #1",
     description:
       "Kho tài khoản Rank Thần Thoại & Full Skin Collector giá siêu tốt. Giao dịch tự động 24/7.",
   },

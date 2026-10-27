@@ -68,7 +68,7 @@ function LoginForm() {
           className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-gold-400 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Quay lại trang chủ MLBB Store</span>
+          <span>Quay lại trang chủ SHOP QAUT</span>
         </Link>
 
         {/* Card Đăng nhập */}

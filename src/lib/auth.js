@@ -44,7 +44,7 @@ export const authOptions = {
         if (isUserValid && isPassValid) {
           return {
             id: "admin-1",
-            name: "Admin MLBB STORE",
+            name: "Admin SHOP QAUT",
             email: "admin@mlbbstore.vn",
             role: "admin",
           };

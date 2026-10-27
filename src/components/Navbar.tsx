@@ -112,12 +112,12 @@ export default function Navbar() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
-                alt="MLBB STORE Logo"
+                alt="SHOP QAUT Logo"
                 className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-lg group-hover:scale-105 transition-transform"
               />
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xl sm:text-2xl font-black tracking-tight uppercase text-slate-100 font-sans">
-                  MLBB <span className="text-gold-400">STORE</span>
+                  SHOP <span className="text-gold-400">QAUT</span>
                 </span>
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden sm:inline-block">
                   eSports Shop
@@ -224,11 +224,11 @@ export default function Navbar() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo.png"
-                alt="MLBB STORE Logo"
+                alt="SHOP QAUT Logo"
                 className="w-7 h-7 object-contain rounded-md"
               />
               <span className="text-base font-black uppercase text-slate-100">
-                MLBB <span className="text-gold-400">STORE</span>
+                SHOP <span className="text-gold-400">QAUT</span>
               </span>
             </Link>
             <button
