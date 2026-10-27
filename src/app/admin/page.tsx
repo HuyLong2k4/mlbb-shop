@@ -356,7 +356,7 @@ export default function AdminPage() {
       emblems: formData.emblems || "Full",
       description: formData.description,
       reputationScore: 100,
-      securityInfo: "100% Trắng Thông Tin",
+      securityInfo: "Thông Tin Đẹp",
       screenshots: screenshotsArray,
       images: uploadedImages, // Lưu mảng URL Cloudinary trực tiếp
     };

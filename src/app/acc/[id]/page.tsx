@@ -539,7 +539,7 @@ export default function AccountDetailPage() {
                   <span className="text-emerald-400 font-mono">
                     {account.reputationScore ?? 100}/100
                   </span>{" "}
-                  • {account.securityInfo || "100% Trắng Thông Tin"}
+                  • {account.securityInfo || "Thông Tin Đẹp"}
                 </div>
                 <div className="text-slate-400 text-[11px]">
                   {account.description ||

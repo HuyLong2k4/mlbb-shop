@@ -73,7 +73,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="max-w-2xl mx-auto text-xs sm:text-sm text-slate-300 font-medium">
-            100% tài khoản trắng thông tin bảo hành lên tới 3 tháng.
+           Bảo hành lên tới 3 tháng.
           </p>
         </div>
       </section>

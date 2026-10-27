@@ -100,7 +100,7 @@ export async function GET(request, { params }) {
           : "Full"
         : "Full";
     account.reputationScore = account.reputationScore ?? 100;
-    account.securityInfo = account.securityInfo || "100% Trắng Thông Tin (Chính chủ)";
+    account.securityInfo = account.securityInfo || " Thông Tin Đẹp (Chính chủ)";
     account.winRate = account.winRate || {
       overall: "55.0%",
       totalMatches: 1000,

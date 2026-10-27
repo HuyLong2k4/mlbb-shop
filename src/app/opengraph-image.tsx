@@ -105,7 +105,7 @@ export default async function Image() {
               fontWeight: "bold",
             }}
           >
-            🛡️ 100% Trắng Thông Tin
+            🛡️ Thông Tin đẹp
           </div>
           <div
             style={{

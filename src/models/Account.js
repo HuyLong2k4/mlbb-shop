@@ -157,7 +157,7 @@ const AccountSchema = new mongoose.Schema(
     // Tình trạng thông tin bảo mật (Trắng thông tin, đổi email...)
     securityInfo: {
       type: String,
-      default: "100% Trắng Thông Tin (Chưa liên kết SĐT, đổi Email sạch ngay)",
+      default: "Thông Tin Đẹp (Chưa liên kết SĐT, đổi Email sạch ngay)",
       trim: true,
     },
 

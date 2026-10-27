@@ -14,7 +14,7 @@ export const siteConfig = {
   shortName: "SHOP QAUT",
   tagline: "Sàn Giao Dịch Acc MLBB Uy Tín #1 Việt Nam",
   description:
-    "Hệ thống mua bán tài khoản Mobile Legends: Bang Bang tự động 24/7 uy tín #1 Việt Nam. Kho nick Rank Thần Thoại, Vinh Quang, Full Skin Collector, Legend, KOF và Acc Sinh Viên giá rẻ. 100% Trắng Thông Tin, bảo hành trọn đời.",
+    "Hệ thống mua bán tài khoản Mobile Legends: Bang Bang tự động 24/7 uy tín #1 Việt Nam. Kho nick Rank Thần Thoại, Vinh Quang, Full Skin Collector, Legend, KOF và Acc Sinh Viên giá rẻ.",
   url: process.env.NEXTAUTH_URL || "https://mlbbstore.vn",
 
   // Thông tin liên hệ chính (Single Source of Truth)
@@ -46,7 +46,7 @@ export const siteConfig = {
   commitments: {
     warranty: "Bảo hành 3 tháng",
     deliveryTime: "Giao dịch nhanh chóng",
-    security: "100% Trắng Thông Tin",
+    security: "Thông Tin Đẹpp",
     refund: "Hoàn tiền 100% nếu sai mô tả",
   },
 };
