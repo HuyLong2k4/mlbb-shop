@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
+import { verifyAdminSession } from "@/lib/serverAuth";
 
 /**
  * ==============================================================================
@@ -21,9 +22,11 @@ export async function GET(request) {
     const collectionTier = searchParams.get("collectionTier") || searchParams.get("tier");
     const status = searchParams.get("status");
 
-    // Xử lý tham số phân trang
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-    const limit = Math.max(1, parseInt(searchParams.get("limit") || "12", 10));
+    // Xử lý tham số phân trang an toàn (chống lỗi NaN Injection làm sập MongoDB và giới hạn tối đa 100/trang)
+    const rawPage = parseInt(searchParams.get("page") || "1", 10);
+    const rawLimit = parseInt(searchParams.get("limit") || "12", 10);
+    const page = Number.isInteger(rawPage) && rawPage > 0 ? rawPage : 1;
+    const limit = Number.isInteger(rawLimit) && rawLimit > 0 ? Math.min(rawLimit, 100) : 12;
     const skip = (page - 1) * limit;
 
     // Xây dựng điều kiện lọc
@@ -119,6 +122,10 @@ export async function GET(request) {
  * ==============================================================================
  */
 export async function POST(request) {
+  // 1. CHẶN TRUY CẬP TRÁI PHÉP: Bắt buộc phải đăng nhập quyền Admin mới được tạo tài khoản
+  const authError = await verifyAdminSession();
+  if (authError) return authError;
+
   try {
     await dbConnect();
     const body = await request.json();

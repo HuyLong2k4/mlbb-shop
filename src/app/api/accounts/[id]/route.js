@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { revalidatePath, revalidateTag } from "next/cache";
 import dbConnect from "@/lib/dbConnect";
 import Account from "@/models/Account";
+import { verifyAdminSession } from "@/lib/serverAuth";
 
 /**
  * GET /api/accounts/[id]
@@ -128,6 +129,10 @@ export async function GET(request, { params }) {
  * Cập nhật một phần tài khoản (ví dụ: thay đổi trạng thái Còn hàng / Đã bán)
  */
 export async function PATCH(request, { params }) {
+  // 1. BẢO MẬT: Bắt buộc đăng nhập quyền Admin mới được cập nhật trạng thái/giá
+  const authError = await verifyAdminSession();
+  if (authError) return authError;
+
   try {
     await dbConnect();
 
@@ -215,6 +220,10 @@ export async function PATCH(request, { params }) {
  * Tự động phát hiện ảnh cũ bị xóa để dọn dẹp trên Cloudinary
  */
 export async function PUT(request, { params }) {
+  // 1. BẢO MẬT: Bắt buộc đăng nhập quyền Admin mới được chỉnh sửa thông tin tài khoản
+  const authError = await verifyAdminSession();
+  if (authError) return authError;
+
   try {
     await dbConnect();
 
@@ -298,16 +307,24 @@ export async function PUT(request, { params }) {
       { new: true, runValidators: true }
     ).lean();
 
-    // 5. Tự động dọn dẹp ảnh cũ trên Cloudinary (nếu có ảnh bị xóa khỏi danh sách)
-    if (Array.isArray(body.images) && Array.isArray(oldAccount.images)) {
-      const newImagesSet = new Set(body.images);
-      const deletedImages = oldAccount.images.filter((oldUrl) => !newImagesSet.has(oldUrl));
+    // 5. Tự động dọn dẹp ảnh cũ trên Cloudinary (thu thập link cũ từ cả images và screenshots)
+    if (Array.isArray(body.images)) {
+      const oldUrls = new Set([
+        ...(Array.isArray(oldAccount.images) ? oldAccount.images : []),
+        ...(Array.isArray(oldAccount.screenshots)
+          ? oldAccount.screenshots.map((s) => s.imageUrl).filter(Boolean)
+          : []),
+      ]);
+
+      const newUrls = new Set(body.images);
+      const deletedImages = Array.from(oldUrls).filter((oldUrl) => oldUrl && !newUrls.has(oldUrl));
 
       if (deletedImages.length > 0) {
         try {
           const { deleteMultipleFromCloudinary } = await import("@/lib/cloudinary");
-          deleteMultipleFromCloudinary(deletedImages);
-          console.log(`[Cloudinary Cleanup] Đã gửi lệnh xóa ${deletedImages.length} ảnh cũ.`);
+          // Bắt buộc dùng await để Serverless container không bị freeze trước khi lệnh xóa tới Cloudinary
+          await deleteMultipleFromCloudinary(deletedImages);
+          console.log(`[Cloudinary Cleanup] Đã xóa thành công ${deletedImages.length} ảnh cũ trên Cloudinary.`);
         } catch (cleanErr) {
           console.warn("[Cloudinary Cleanup Warning] Không thể xóa ảnh cũ:", cleanErr.message);
         }

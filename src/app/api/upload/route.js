@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+import { verifyAdminSession } from "@/lib/serverAuth";
 
 // Cấu hình Cloudinary (Dùng biến môi trường nếu có, hoặc dùng fallback có sẵn)
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "daksfvybx";
@@ -19,8 +20,12 @@ cloudinary.config({
  * Upload trực tiếp lên Cloudinary và trả về mảng URL ảnh an toàn (HTTPS)
  */
 export async function POST(request) {
+  // 1. BẢO MẬT: Bắt buộc đăng nhập quyền Admin mới được tải ảnh lên Cloudinary
+  const authError = await verifyAdminSession();
+  if (authError) return authError;
+
   try {
-    // 1. Kiểm tra cấu hình Cloudinary
+    // 2. Kiểm tra cấu hình Cloudinary
     if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
       return NextResponse.json(
         {
@@ -49,18 +54,39 @@ export async function POST(request) {
     for (const file of files) {
       if (!(file instanceof File)) continue;
 
+      // Kiểm tra định dạng (chỉ cho phép file ảnh)
+      if (file.type && !file.type.startsWith("image/")) {
+        return NextResponse.json(
+          { success: false, message: `File '${file.name}' không phải là định dạng hình ảnh hợp lệ.` },
+          { status: 400 }
+        );
+      }
+
+      // Giới hạn dung lượng tối đa 10MB / file
+      if (file.size > 10 * 1024 * 1024) {
+        return NextResponse.json(
+          { success: false, message: `File '${file.name}' vượt quá dung lượng tối đa cho phép (10MB).` },
+          { status: 400 }
+        );
+      }
+
       // Chuyển file sang Buffer
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // Upload qua Cloudinary upload_stream
+      // Upload qua Cloudinary upload_stream có timeout 25s chống treo request
       const uploadPromise = new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+          reject(new Error(`Quá thời gian chờ tải lên Cloudinary cho file '${file.name}' (Timeout 25s).`));
+        }, 25000);
+
         const uploadStream = cloudinary.uploader.upload_stream(
           {
             folder: "mlbb_accounts",
             resource_type: "image",
           },
           (error, result) => {
+            clearTimeout(timer);
             if (error) {
               console.error("Lỗi upload Cloudinary:", error);
               reject(error);
@@ -118,6 +144,10 @@ export async function POST(request) {
  * Nhận danh sách URL hoặc publicId để xóa ảnh cũ trên Cloudinary
  */
 export async function DELETE(request) {
+  // 1. BẢO MẬT: Bắt buộc đăng nhập quyền Admin mới được xóa ảnh khỏi Cloudinary
+  const authError = await verifyAdminSession();
+  if (authError) return authError;
+
   try {
     const body = await request.json();
     const { url, publicId, urls, publicIds } = body;
