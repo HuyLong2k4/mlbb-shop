@@ -67,6 +67,13 @@ export async function deleteFromCloudinary(publicIdOrUrl) {
   const publicId = getPublicIdFromUrl(publicIdOrUrl);
   if (!publicId) return null;
 
+  // BẢO MẬT: Chỉ cho phép xóa các file nằm trong thư mục 'mlbb_accounts' của shop,
+  // ngăn chặn việc xóa nhầm hoặc tấn công xóa tài nguyên ngoài phạm vi
+  if (!publicId.startsWith("mlbb_accounts/")) {
+    console.warn(`[Security Alert] Chặn yêu cầu xóa tài nguyên nằm ngoài folder mlbb_accounts: ${publicId}`);
+    return null;
+  }
+
   try {
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: "image",

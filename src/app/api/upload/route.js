@@ -48,16 +48,28 @@ export async function POST(request) {
       );
     }
 
+    // Giới hạn số lượng file tải lên trong 1 đợt (chống spam DoS)
+    if (files.length > 15) {
+      return NextResponse.json(
+        { success: false, message: "Số lượng file tải lên cùng lúc không được vượt quá 15 ảnh." },
+        { status: 400 }
+      );
+    }
+
+    const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     const uploadPromises = [];
 
     // 3. Xử lý từng file ảnh và đẩy lên Cloudinary
     for (const file of files) {
       if (!(file instanceof File)) continue;
 
-      // Kiểm tra định dạng (chỉ cho phép file ảnh)
-      if (file.type && !file.type.startsWith("image/")) {
+      // Kiểm tra định dạng nghiêm ngặt (chỉ cho phép JPG, PNG, WEBP)
+      if (!file.type || !ALLOWED_MIME_TYPES.includes(file.type.toLowerCase())) {
         return NextResponse.json(
-          { success: false, message: `File '${file.name}' không phải là định dạng hình ảnh hợp lệ.` },
+          {
+            success: false,
+            message: `File '${file.name}' không đúng định dạng cho phép (chỉ hỗ trợ JPG, PNG, WEBP).`,
+          },
           { status: 400 }
         );
       }
