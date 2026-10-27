@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { getOptimizedImageUrl } from "@/lib/imageOptimizer";
 import {
   ArrowLeft,
   Save,
@@ -162,7 +164,7 @@ export default function EditAccountPage() {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
-        const img = new Image();
+        const img = new window.Image();
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
@@ -628,11 +630,13 @@ export default function EditAccountPage() {
                   key={idx}
                   className="group relative aspect-[16/10] bg-navy-950 rounded-lg overflow-hidden border border-navy-800 hover:border-gold-500/50 transition-all"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={imgUrl}
+                  <Image
+                    src={getOptimizedImageUrl(imgUrl, { width: 300 })}
                     alt={`Ảnh #${idx + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="200px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
                   />
 
                   {/* Badge số thứ tự (Ảnh 1 là ảnh bìa chính) */}

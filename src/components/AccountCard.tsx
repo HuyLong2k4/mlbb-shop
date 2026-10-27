@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { getOptimizedImageUrl } from "@/lib/imageOptimizer";
 
 export interface AccountProps {
   id: string;
@@ -30,11 +32,13 @@ export default function AccountCard({ account }: { account: AccountProps }) {
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-navy-950/70 z-10" />
 
         {account.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={account.imageUrl}
-            alt={account.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          <Image
+            src={getOptimizedImageUrl(account.imageUrl, { width: 600 })}
+            alt={account.title || `Acc #${account.code}`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            unoptimized
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-navy-950 p-6 group-hover:scale-105 transition-transform duration-500">

@@ -27,6 +27,9 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10, // Giới hạn tối đa 10 kết nối cho mỗi Serverless container để chống tràn 500 connections của MongoDB Atlas
+      serverSelectionTimeoutMS: 5000, // Timeout 5s nếu server MongoDB không phản hồi, tránh treo request
+      socketTimeoutMS: 45000, // Timeout socket nếu kết nối nhàn rỗi quá lâu
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {

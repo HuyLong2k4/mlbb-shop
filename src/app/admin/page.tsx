@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getOptimizedImageUrl } from "@/lib/imageOptimizer";
 import { useSession, signOut } from "next-auth/react";
 import {
   PlusCircle,
@@ -150,7 +152,7 @@ export default function AdminPage() {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
-        const img = new Image();
+        const img = new window.Image();
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement("canvas");
@@ -662,11 +664,13 @@ export default function AdminPage() {
                       key={idx}
                       className="group relative aspect-video rounded-xl overflow-hidden bg-navy-900 border border-navy-700 hover:border-gold-400 transition-all shadow-sm"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
+                      <Image
+                        src={getOptimizedImageUrl(url, { width: 300 })}
                         alt={`Ảnh ${idx + 1}`}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="160px"
+                        className="object-cover"
+                        unoptimized
                       />
                       <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-black/80 text-gold-400">
                         #{idx + 1}
@@ -857,12 +861,16 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 px-3">
                         {firstImg ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={firstImg}
-                            alt={acc.id}
-                            className="w-10 h-7 object-cover rounded border border-navy-700"
-                          />
+                          <div className="relative w-10 h-7 rounded overflow-hidden border border-navy-700">
+                            <Image
+                              src={getOptimizedImageUrl(firstImg, { width: 100 })}
+                              alt={acc.id}
+                              fill
+                              sizes="40px"
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
                         ) : (
                           <div className="w-10 h-7 rounded bg-navy-950 border border-navy-700 flex items-center justify-center text-[9px] text-slate-500">
                             HUD

@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
+import { getOptimizedImageUrl } from "@/lib/imageOptimizer";
 import {
   Shield,
   Sparkles,
@@ -235,12 +237,15 @@ export default function AccountDetailPage() {
             {/* Khung mô phỏng In-Game Screenshot hoặc Ảnh Cloudinary thực tế */}
             {currentScreenshot.imageUrl ? (
               <div className="relative w-full h-full flex items-center justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={currentScreenshot.imageUrl}
-                  alt={currentScreenshot.title}
-                  className="w-full h-full object-contain cursor-zoom-in"
+                <Image
+                  src={getOptimizedImageUrl(currentScreenshot.imageUrl, { width: 1200 })}
+                  alt={currentScreenshot.title || `Ảnh #${account.id}`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-contain cursor-zoom-in"
                   onClick={() => setZoomImage(currentScreenshot.imageUrl || null)}
+                  priority
+                  unoptimized
                 />
                 <div className="absolute top-2.5 left-2.5 z-20">
                   <span className="px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-black/85 text-gold-400 border border-gold-500/40 backdrop-blur-sm">
@@ -348,12 +353,16 @@ export default function AccountDetailPage() {
                   }`}
                 >
                   {shot.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={shot.imageUrl}
-                      alt={shot.title || `Ảnh ${idx + 1}`}
-                      className="w-full h-full object-contain bg-black/80 rounded-lg"
-                    />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={getOptimizedImageUrl(shot.imageUrl, { width: 240 })}
+                        alt={shot.title || `Ảnh ${idx + 1}`}
+                        fill
+                        sizes="120px"
+                        className="object-cover bg-black/80 rounded-lg"
+                        unoptimized
+                      />
+                    </div>
                   ) : (
                     <div className="h-full flex flex-col justify-between text-[10px]">
                       <span className="font-mono font-bold text-gold-400">#0{idx + 1}</span>
@@ -587,12 +596,14 @@ export default function AccountDetailPage() {
             >
               <X className="w-6 h-6" />
             </button>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={zoomImage}
+            <Image
+              src={getOptimizedImageUrl(zoomImage, { width: 1920 })}
               alt="Ảnh in-game kích thước đầy đủ"
-              className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl border border-navy-800"
+              width={1600}
+              height={900}
+              className="max-w-full max-h-[90vh] w-auto h-auto object-contain rounded-xl shadow-2xl border border-navy-800"
               onClick={(e) => e.stopPropagation()}
+              unoptimized
             />
           </div>
           <div className="text-center text-xs text-slate-400 mt-2">

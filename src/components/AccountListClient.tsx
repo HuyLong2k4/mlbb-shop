@@ -2,10 +2,12 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, RefreshCw } from "lucide-react";
 import { AccountData } from "@/types/account";
 import Pagination from "@/components/Pagination";
+import { getOptimizedImageUrl } from "@/lib/imageOptimizer";
 
 // Format tiền tệ VNĐ
 const formatVND = (amount: number) => {
@@ -321,11 +323,13 @@ export default function AccountListClient({ initialAccounts }: AccountListClient
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-navy-950/80 z-10 pointer-events-none" />
 
                   {displayImg ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={displayImg}
-                      alt={account.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    <Image
+                      src={getOptimizedImageUrl(displayImg, { width: 600 })}
+                      alt={account.title || `Tài khoản #${account.id}`}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-navy-950 p-4">
