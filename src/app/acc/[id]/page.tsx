@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -39,6 +39,32 @@ export default function AccountDetailPage() {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
   const [zoomImage, setZoomImage] = useState<string | null>(null);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+
+  // Tự động cuộn thumbnail đang kích hoạt vào vị trí trung tâm tầm nhìn
+  useEffect(() => {
+    if (thumbnailContainerRef.current) {
+      const activeEl = thumbnailContainerRef.current.children[activeImageIndex] as HTMLElement;
+      if (activeEl) {
+        activeEl.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [activeImageIndex]);
+
+  // Cuộn thanh thumbnail sang trái hoặc phải
+  const scrollThumbnails = (direction: "left" | "right") => {
+    if (thumbnailContainerRef.current) {
+      const scrollAmount = direction === "left" ? -220 : 220;
+      thumbnailContainerRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Lắng nghe phím ESC để đóng modal zoom ảnh
   useEffect(() => {
@@ -338,41 +364,81 @@ export default function AccountDetailPage() {
             )}
           </div>
 
-          {/* Dải ảnh Thumbnails chuyển nhanh */}
+          {/* Dải ảnh Thumbnails dạng Carousel trượt ngang mượt mà */}
           {screenshots.length > 1 && (
-            <div className="grid grid-cols-4 gap-2.5 sm:gap-3">
-              {screenshots.map((shot: any, idx: number) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setActiveImageIndex(idx)}
-                  className={`relative aspect-[16/10] rounded-xl overflow-hidden p-1.5 text-left transition-all border cursor-pointer ${
-                    activeImageIndex === idx
-                      ? "border-gold-400 ring-2 ring-gold-400/40 bg-navy-850 shadow-gold-sm"
-                      : "border-navy-800 bg-navy-900 hover:border-navy-700 opacity-70 hover:opacity-100"
-                  }`}
-                >
-                  {shot.imageUrl ? (
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={getOptimizedImageUrl(shot.imageUrl, { width: 240 })}
-                        alt={shot.title || `Ảnh ${idx + 1}`}
-                        fill
-                        sizes="120px"
-                        className="object-cover bg-black/80 rounded-lg"
-                        unoptimized
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-full flex flex-col justify-between text-[10px]">
-                      <span className="font-mono font-bold text-gold-400">#0{idx + 1}</span>
-                      <span className="line-clamp-2 text-slate-300 font-semibold leading-tight">
-                        {shot.title}
-                      </span>
-                    </div>
-                  )}
-                </button>
-              ))}
+            <div className="relative group/thumbs py-1">
+              {/* Nút lướt sang trái */}
+              <button
+                type="button"
+                onClick={() => scrollThumbnails("left")}
+                className="hidden sm:flex absolute -left-2.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-navy-900/95 hover:bg-gold-500 hover:text-navy-950 text-slate-300 border border-navy-700 hover:border-gold-400 items-center justify-center shadow-lg transition-all opacity-0 group-hover/thumbs:opacity-100 cursor-pointer"
+                aria-label="Cuộn ảnh sang trái"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {/* Dải ảnh cuộn ngang */}
+              <div
+                ref={thumbnailContainerRef}
+                className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto py-1 px-0.5 scroll-smooth no-scrollbar snap-x snap-mandatory"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {screenshots.map((shot: any, idx: number) => {
+                  const isActive = activeImageIndex === idx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveImageIndex(idx)}
+                      className={`relative shrink-0 w-20 sm:w-24 aspect-[16/10] rounded-xl overflow-hidden p-1 text-left transition-all border cursor-pointer snap-start ${
+                        isActive
+                          ? "border-gold-400 ring-2 ring-gold-400/50 bg-navy-850 shadow-gold-sm scale-[1.03]"
+                          : "border-navy-800 bg-navy-900/90 hover:border-navy-700 opacity-60 hover:opacity-100 hover:scale-[1.01]"
+                      }`}
+                      aria-label={`Xem ảnh ${idx + 1}`}
+                    >
+                      {shot.imageUrl ? (
+                        <div className="relative w-full h-full">
+                          <Image
+                            src={getOptimizedImageUrl(shot.imageUrl, { width: 240 })}
+                            alt={shot.title || `Ảnh ${idx + 1}`}
+                            fill
+                            sizes="96px"
+                            className="object-cover bg-black/80 rounded-lg"
+                            unoptimized
+                          />
+                          <span
+                            className={`absolute bottom-1 right-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold leading-tight ${
+                              isActive
+                                ? "bg-gold-500 text-navy-950"
+                                : "bg-black/75 text-slate-300"
+                            }`}
+                          >
+                            #{idx + 1}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="h-full flex flex-col justify-between text-[10px] p-0.5">
+                          <span className="font-mono font-bold text-gold-400">#{idx + 1}</span>
+                          <span className="line-clamp-1 text-slate-300 font-semibold text-[9px]">
+                            {shot.title}
+                          </span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Nút lướt sang phải */}
+              <button
+                type="button"
+                onClick={() => scrollThumbnails("right")}
+                className="hidden sm:flex absolute -right-2.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-navy-900/95 hover:bg-gold-500 hover:text-navy-950 text-slate-300 border border-navy-700 hover:border-gold-400 items-center justify-center shadow-lg transition-all opacity-0 group-hover/thumbs:opacity-100 cursor-pointer"
+                aria-label="Cuộn ảnh sang phải"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           )}
 

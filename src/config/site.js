@@ -46,7 +46,7 @@ export const siteConfig = {
   commitments: {
     warranty: "Bảo hành 3 tháng",
     deliveryTime: "Giao dịch nhanh chóng",
-    security: "Thông Tin Đẹpp",
+    security: "Thông Tin Đẹp",
     refund: "Hoàn tiền 100% nếu sai mô tả",
   },
 };
