@@ -156,7 +156,8 @@ export default function EditAccountPage() {
 
   // Nén ảnh client-side trước khi tải lên Cloudinary
   const compressImageIfNeeded = async (file: File): Promise<File> => {
-    if (file.size <= 2 * 1024 * 1024 || !file.type.startsWith("image/")) {
+    // Ngưỡng 300KB: Tự động nén và chuẩn hóa WebP để tiết kiệm tối đa dung lượng Cloudinary
+    if (file.size <= 300 * 1024 || !file.type.startsWith("image/")) {
       return file;
     }
 
@@ -193,20 +194,26 @@ export default function EditAccountPage() {
           canvas.toBlob(
             (blob) => {
               if (blob) {
-                const compressedFile = new File([blob], file.name, {
-                  type: "image/jpeg",
-                  lastModified: Date.now(),
-                });
+                const compressedFile = new File(
+                  [blob],
+                  file.name.replace(/\.[^.]+$/, ".webp"),
+                  {
+                    type: "image/webp",
+                    lastModified: Date.now(),
+                  }
+                );
                 resolve(compressedFile);
               } else {
                 resolve(file);
               }
             },
-            "image/jpeg",
+            "image/webp",
             0.82
           );
         };
+        img.onerror = () => resolve(file);
       };
+      reader.onerror = () => resolve(file);
     });
   };
 

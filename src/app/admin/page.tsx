@@ -142,9 +142,10 @@ export default function AdminPage() {
     }));
   };
 
-  // Nén ảnh nếu dung lượng quá lớn (> 2MB) trước khi tải lên Cloudinary
+  // Nén ảnh nếu dung lượng vượt quá ngưỡng (> 300KB) trước khi tải lên Cloudinary
   const compressImageIfNeeded = async (file: File): Promise<File> => {
-    if (file.size <= 2 * 1024 * 1024 || !file.type.startsWith("image/")) {
+    // Ngưỡng 300KB: Tự động nén và chuyển sang định dạng WebP để tiết kiệm tối đa dung lượng Cloudinary
+    if (file.size <= 300 * 1024 || !file.type.startsWith("image/")) {
       return file;
     }
 
@@ -195,7 +196,7 @@ export default function AdminPage() {
               }
             },
             "image/webp",
-            0.85
+            0.82
           );
         };
         img.onerror = () => resolve(file);
