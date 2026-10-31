@@ -23,6 +23,8 @@ import {
   ToggleLeft,
   ToggleRight,
   Edit,
+  Trash2,
+  Clock,
 } from "lucide-react";
 
 interface AccountFormData {
@@ -126,6 +128,40 @@ export default function AdminPage() {
       alert(`Lỗi: ${err.message}`);
     } finally {
       setUpdatingStatusId(null);
+    }
+  };
+
+  // Trạng thái chạy dọn dẹp ảnh các acc đã bán > 10 ngày
+  const [isCleaning, setIsCleaning] = useState(false);
+
+  const handleCleanupSoldAccounts = async () => {
+    const confirmed = window.confirm(
+      "Hệ thống sẽ quét các tài khoản đã bán từ 10 ngày trước và xóa toàn bộ ảnh chi tiết trên Cloudinary (chỉ giữ lại 1 ảnh thumbnail đại diện làm lịch sử giao dịch).\n\nBạn có chắc chắn muốn thực hiện dọn dẹp ngay bây giờ?"
+    );
+    if (!confirmed) return;
+
+    setIsCleaning(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      const res = await fetch("/api/cron/cleanup-sold", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ days: 10 }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Không thể dọn dẹp ảnh tài khoản");
+      }
+
+      setSuccessMsg(data.message);
+      await loadExistingAccounts();
+      router.refresh();
+    } catch (err: any) {
+      setErrorMsg(err.message || "Lỗi khi thực thi dọn dẹp ảnh");
+    } finally {
+      setIsCleaning(false);
     }
   };
 
@@ -448,6 +484,16 @@ export default function AdminPage() {
             <Database className="w-4 h-4" />
             <span>Seed 8 Acc Mẫu</span>
           </Link>
+          <button
+            type="button"
+            onClick={handleCleanupSoldAccounts}
+            disabled={isCleaning}
+            className="px-3.5 py-2 rounded-lg bg-navy-850 hover:bg-navy-800 border border-gold-500/40 text-gold-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-sm"
+            title="Quét và xóa ảnh chi tiết trên Cloudinary của các tài khoản đã bán từ 10 ngày trước"
+          >
+            <Trash2 className={`w-3.5 h-3.5 text-gold-400 ${isCleaning ? "animate-spin" : ""}`} />
+            <span>{isCleaning ? "Đang dọn dẹp..." : "Dọn dẹp ảnh đã bán (>10 ngày)"}</span>
+          </button>
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/auth/login" })}
@@ -912,6 +958,31 @@ export default function AdminPage() {
                           )}
                           <span>{updatingStatusId === acc.id ? "Đang lưu..." : acc.status}</span>
                         </button>
+                        {acc.status === "Đã bán" && (
+                          <div className="mt-1 flex items-center gap-1 text-[9px]">
+                            {acc.isImageCleaned ? (
+                              <span className="text-emerald-400 font-medium">✓ Đã dọn dẹp ảnh</span>
+                            ) : acc.soldAt ? (
+                              (() => {
+                                const days = Math.floor(
+                                  (Date.now() - new Date(acc.soldAt).getTime()) /
+                                    (1000 * 60 * 60 * 24)
+                                );
+                                return days >= 10 ? (
+                                  <span className="text-amber-400 font-bold flex items-center gap-0.5">
+                                    <Clock className="w-2.5 h-2.5" /> Chờ dọn ({days} ngày)
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-400 flex items-center gap-0.5">
+                                    <Clock className="w-2.5 h-2.5" /> Đã bán {days} ngày
+                                  </span>
+                                );
+                              })()
+                            ) : (
+                              <span className="text-slate-500">Đã bán gần đây</span>
+                            )}
+                          </div>
+                        )}
                       </td>
                       <td className="py-3 px-3 text-right">
                         <div className="flex items-center justify-end gap-2.5">

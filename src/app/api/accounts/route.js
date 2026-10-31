@@ -196,6 +196,14 @@ export async function POST(request) {
       body.rank = "Thần Thoại";
     }
 
+    // Quản lý vòng đời: Nếu tạo acc với trạng thái Đã bán thì ghi nhận soldAt
+    if (body.status === "Đã bán") {
+      body.soldAt = new Date();
+    } else {
+      body.status = "Còn hàng";
+      body.soldAt = null;
+    }
+
     const newAccount = await Account.create(body);
 
     // Tự động làm mới cache trang chủ và các danh mục ngay lập tức (On-Demand ISR Revalidation)

@@ -130,6 +130,26 @@ const AccountSchema = new mongoose.Schema(
       index: true,
     },
 
+    // Thời điểm tài khoản chuyển sang trạng thái "Đã bán" (Bắt đầu đếm thời gian vòng đời)
+    soldAt: {
+      type: Date,
+      default: null,
+      index: true,
+    },
+
+    // Đánh dấu ảnh chi tiết (screenshots) đã được tự động dọn dẹp khỏi Cloudinary sau 10 ngày chưa
+    isImageCleaned: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    // Thời điểm thực hiện dọn dẹp ảnh chi tiết
+    cleanedImagesAt: {
+      type: Date,
+      default: null,
+    },
+
     // Thống kê Winrate
     winRate: {
       type: WinRateSchema,

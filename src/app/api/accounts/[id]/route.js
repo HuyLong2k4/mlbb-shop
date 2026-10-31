@@ -176,6 +176,26 @@ export async function PATCH(request, { params }) {
 
     const normalizedId = decodeURIComponent(String(id).trim());
 
+    // Quản lý vòng đời tài khoản: Ghi nhận soldAt khi chuyển sang "Đã bán"
+    if (updatePayload.status !== undefined) {
+      if (updatePayload.status === "Đã bán") {
+        const existing = await Account.findOne({
+          $or: [
+            { id: normalizedId },
+            { id: normalizedId.toUpperCase() },
+            { id: normalizedId.toLowerCase() },
+          ],
+        }).select("soldAt");
+
+        if (!existing?.soldAt) {
+          updatePayload.soldAt = new Date();
+        }
+      } else if (updatePayload.status === "Còn hàng") {
+        updatePayload.soldAt = null;
+        updatePayload.isImageCleaned = false;
+      }
+    }
+
     const updatedAccount = await Account.findOneAndUpdate(
       {
         $or: [
@@ -294,7 +314,17 @@ export async function PUT(request, { params }) {
     if (body.collectionTier !== undefined) updateData.collectionTier = body.collectionTier;
     if (body.heroCount !== undefined) updateData.heroCount = Number(body.heroCount) || 0;
     if (body.skinCount !== undefined) updateData.skinCount = Number(body.skinCount) || 0;
-    if (body.status !== undefined) updateData.status = body.status;
+    if (body.status !== undefined) {
+      updateData.status = body.status;
+      if (body.status === "Đã bán") {
+        if (!oldAccount.soldAt) {
+          updateData.soldAt = new Date();
+        }
+      } else if (body.status === "Còn hàng") {
+        updateData.soldAt = null;
+        updateData.isImageCleaned = false;
+      }
+    }
     if (body.emblems !== undefined) updateData.emblems = body.emblems;
     if (body.description !== undefined) updateData.description = String(body.description).trim();
 
