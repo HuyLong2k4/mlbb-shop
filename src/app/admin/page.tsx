@@ -476,20 +476,12 @@ export default function AdminPage() {
             <ArrowLeft className="w-4 h-4" />
             <span>Về Trang Chủ</span>
           </Link>
-          <Link
-            href="/api/seed"
-            target="_blank"
-            className="px-3.5 py-2 rounded-lg bg-gold-500 hover:bg-gold-400 text-navy-950 text-xs font-black uppercase tracking-wider transition-colors flex items-center gap-1.5 shadow-gold-sm"
-          >
-            <Database className="w-4 h-4" />
-            <span>Seed 8 Acc Mẫu</span>
-          </Link>
           <button
             type="button"
             onClick={handleCleanupSoldAccounts}
             disabled={isCleaning}
             className="px-3.5 py-2 rounded-lg bg-navy-850 hover:bg-navy-800 border border-gold-500/40 text-gold-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-sm"
-            title="Quét và xóa ảnh chi tiết trên Cloudinary của các tài khoản đã bán từ 10 ngày trước"
+            title="Quét và xóa ảnh chi tiết của các tài khoản đã bán từ 10 ngày trước"
           >
             <Trash2 className={`w-3.5 h-3.5 text-gold-400 ${isCleaning ? "animate-spin" : ""}`} />
             <span>{isCleaning ? "Đang dọn dẹp..." : "Dọn dẹp ảnh đã bán (>10 ngày)"}</span>
