@@ -5,7 +5,7 @@ import { verifyAdminSession } from "@/lib/serverAuth";
 // Cấu hình Cloudinary (Dùng biến môi trường nếu có, hoặc dùng fallback có sẵn)
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || "daksfvybx";
 const API_KEY = process.env.CLOUDINARY_API_KEY || "473819711181877";
-const API_SECRET = process.env.CLOUDINARY_API_SECRET || "yGS_PcZrzSubqAqQ8G-k2HsMof5o";
+const API_SECRET = process.env.CLOUDINARY_API_SECRET || "GS_PcZrzSubqAqQ8G-k2HsMof5o";
 
 cloudinary.config({
   cloud_name: CLOUD_NAME,

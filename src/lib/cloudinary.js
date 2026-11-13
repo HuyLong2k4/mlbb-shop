@@ -4,7 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "daksfvybx",
   api_key: process.env.CLOUDINARY_API_KEY || "473819711181877",
-  api_secret: process.env.CLOUDINARY_API_SECRET || "yGS_PcZrzSubqAqQ8G-k2HsMof5o",
+  api_secret: process.env.CLOUDINARY_API_SECRET || "GS_PcZrzSubqAqQ8G-k2HsMof5o",
   secure: true,
 });
 
@@ -67,10 +67,12 @@ export async function deleteFromCloudinary(publicIdOrUrl) {
   const publicId = getPublicIdFromUrl(publicIdOrUrl);
   if (!publicId) return null;
 
-  // BẢO MẬT: Chỉ cho phép xóa các file nằm trong thư mục 'mlbb_accounts' của shop,
-  // ngăn chặn việc xóa nhầm hoặc tấn công xóa tài nguyên ngoài phạm vi
-  if (!publicId.startsWith("mlbb_accounts/")) {
-    console.warn(`[Security Alert] Chặn yêu cầu xóa tài nguyên nằm ngoài folder mlbb_accounts: ${publicId}`);
+  // BẢO MẬT: Cho phép xóa các file trong folder 'mlbb_accounts' hoặc các file ảnh ở thư mục gốc của shop (định dạng ID chuẩn alphanumeric)
+  const isMlbbFolder = publicId.startsWith("mlbb_accounts/");
+  const isRootImage = /^[a-zA-Z0-9_-]+$/.test(publicId);
+
+  if (!isMlbbFolder && !isRootImage) {
+    console.warn(`[Security Alert] Chặn yêu cầu xóa tài nguyên có public_id không hợp lệ: ${publicId}`);
     return null;
   }
 

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { cleanupExpiredSoldAccounts, getCleanupStats } from "@/lib/accountLifecycle";
+import {
+  cleanupExpiredSoldAccounts,
+  cleanupOrphanedCloudinaryImages,
+  getCleanupStats,
+} from "@/lib/accountLifecycle";
 import { verifyAdminSession } from "@/lib/serverAuth";
 
 /**
@@ -40,6 +44,7 @@ async function authorizeRequest(request) {
  * GET /api/cron/cleanup-sold
  * Query params:
  *  - ?action=stats: Chỉ lấy thông tin số lượng acc cần dọn dẹp
+ *  - ?action=orphans: Dọn dẹp riêng ảnh rác mồ côi
  *  - ?days=10: Số ngày sau khi bán (mặc định 10)
  */
 export async function GET(request) {
@@ -56,9 +61,23 @@ export async function GET(request) {
     return NextResponse.json({ success: true, data: stats });
   }
 
-  // Thực thi dọn dẹp
-  const result = await cleanupExpiredSoldAccounts(days);
-  return NextResponse.json(result, { status: result.success ? 200 : 500 });
+  if (action === "orphans") {
+    const orphanRes = await cleanupOrphanedCloudinaryImages();
+    return NextResponse.json(orphanRes, {
+      status: orphanRes.success ? 200 : 500,
+    });
+  }
+
+  // Mặc định: Dọn dẹp cả acc đã bán > 10 ngày VÀ quét sạch ảnh rác mồ côi
+  const expiredRes = await cleanupExpiredSoldAccounts(days);
+  const orphanRes = await cleanupOrphanedCloudinaryImages();
+
+  return NextResponse.json({
+    success: expiredRes.success && orphanRes.success,
+    message: `${expiredRes.message} Đồng thời: ${orphanRes.message}`,
+    expiredAccounts: expiredRes,
+    orphanedCleanup: orphanRes,
+  });
 }
 
 /**
@@ -70,15 +89,39 @@ export async function POST(request) {
   if (authError) return authError;
 
   let days = 10;
+  let action = "all";
+
   try {
     const body = await request.json();
     if (body?.days && Number.isInteger(Number(body.days))) {
       days = Math.max(1, Number(body.days));
     }
+    if (body?.action) {
+      action = body.action;
+    }
   } catch {
-    // Không có body thì dùng mặc định 10 ngày
+    // Không có body thì dùng mặc định
   }
 
-  const result = await cleanupExpiredSoldAccounts(days);
-  return NextResponse.json(result, { status: result.success ? 200 : 500 });
+  if (action === "orphans") {
+    const orphanRes = await cleanupOrphanedCloudinaryImages();
+    return NextResponse.json(orphanRes, {
+      status: orphanRes.success ? 200 : 500,
+    });
+  }
+
+  // Dọn dẹp cả tài khoản đã bán > 10 ngày VÀ quét sạch toàn bộ ảnh mồ côi
+  const expiredRes = await cleanupExpiredSoldAccounts(days);
+  const orphanRes = await cleanupOrphanedCloudinaryImages();
+
+  const totalImagesDeleted =
+    (expiredRes.deletedImagesCount || 0) + (orphanRes.deletedOrphanedCount || 0);
+
+  return NextResponse.json({
+    success: expiredRes.success && orphanRes.success,
+    message: `Đã dọn dẹp ${expiredRes.cleanedAccountsCount || 0} acc đã bán (>10 ngày) và xóa tổng cộng ${totalImagesDeleted} ảnh trên Cloudinary!`,
+    totalImagesDeleted,
+    expiredAccounts: expiredRes,
+    orphanedCleanup: orphanRes,
+  });
 }
