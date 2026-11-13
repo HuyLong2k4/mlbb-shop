@@ -264,7 +264,7 @@ export default function AccountDetailPage() {
             {currentScreenshot.imageUrl ? (
               <div className="relative w-full h-full flex items-center justify-center">
                 <Image
-                  src={getOptimizedImageUrl(currentScreenshot.imageUrl, { width: 1200 })}
+                  src={getOptimizedImageUrl(currentScreenshot.imageUrl, { width: 900 })}
                   alt={currentScreenshot.title || `Ảnh #${account.id}`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 60vw"
